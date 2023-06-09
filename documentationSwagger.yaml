@@ -1,0 +1,796 @@
+openapi: 3.0.1
+info:
+  title: Sky Ticket API
+  version: 1.0.0
+servers:
+- url: /http:localhost:3000
+paths:
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        200:
+          description: Success
+          content: {}
+    post:
+      summary: Create a new user
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: user
+  /users/{user_id}:
+    get:
+      summary: Get user by ID
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+    put:
+      summary: Update user by ID
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: user
+    delete:
+      summary: Delete user by ID
+      parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /notifications:
+    get:
+      summary: Get all notifications
+      responses:
+        200:
+          description: Success
+          content: {}
+  /payment:
+    post:
+      summary: Process payment
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Payment'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: payment
+  /transactions:
+    get:
+      summary: Get all transactions
+      responses:
+        200:
+          description: Success
+          content: {}
+    post:
+      summary: Create a new transaction
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Transaction'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: transaction
+  /transactions/{transaction_id}:
+    get:
+      summary: Get transaction by ID
+      parameters:
+      - name: transaction_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+    put:
+      summary: Update transaction by ID
+      parameters:
+      - name: transaction_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Transaction'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: transaction
+    delete:
+      summary: Delete transaction by ID
+      parameters:
+      - name: transaction_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /tickets:
+    get:
+      summary: Get all tickets
+      responses:
+        200:
+          description: Success
+          content: {}
+    post:
+      summary: Create a new ticket
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: ticket
+  /tickets/{ticket_id}:
+    get:
+      summary: Get ticket by ID
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+    put:
+      summary: Update ticket by ID
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: ticket
+    delete:
+      summary: Delete ticket by ID
+      parameters:
+      - name: ticket_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /passengers:
+    get:
+      summary: Get all passengers
+      responses:
+        200:
+          description: Success
+          content: {}
+    post:
+      summary: Create a new passenger
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Passenger'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: passenger
+  /passengers/{passenger_id}:
+    get:
+      summary: Get passenger by ID
+      parameters:
+      - name: passenger_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+    put:
+      summary: Update passenger by ID
+      parameters:
+      - name: passenger_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Passenger'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: passenger
+    delete:
+      summary: Delete passenger by ID
+      parameters:
+      - name: passenger_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /type_of_passengers:
+    get:
+      summary: Get all types of passengers
+      responses:
+        200:
+          description: Success
+          content: {}
+    post:
+      summary: Create a new type of passenger
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/TypeOfPassenger'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: type_of_passenger
+  /type_of_passengers/{type_id}:
+    get:
+      summary: Get type of passenger by ID
+      parameters:
+      - name: type_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+    put:
+      summary: Update type of passenger by ID
+      parameters:
+      - name: type_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/TypeOfPassenger'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: type_of_passenger
+    delete:
+      summary: Delete type of passenger by ID
+      parameters:
+      - name: type_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /discount:
+    get:
+      summary: Get all discounts
+      responses:
+        200:
+          description: Success
+          content: {}
+    post:
+      summary: Create a new discount
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Discount'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: discount
+  /discount/{discount_id}:
+    get:
+      summary: Get discount by ID
+      parameters:
+      - name: discount_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+    put:
+      summary: Update discount by ID
+      parameters:
+      - name: discount_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Discount'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: discount
+    delete:
+      summary: Delete discount by ID
+      parameters:
+      - name: discount_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /region_country:
+    get:
+      summary: Get all regions and countries
+      responses:
+        200:
+          description: Success
+          content: {}
+  /routes:
+    get:
+      summary: Get all routes
+      responses:
+        200:
+          description: Success
+          content: {}
+  /routes/{route_id}:
+    get:
+      summary: Get route by ID
+      parameters:
+      - name: route_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /detail_routes:
+    get:
+      summary: Get all detail routes
+      responses:
+        200:
+          description: Success
+          content: {}
+  /detail_routes/{detail_route_id}:
+    get:
+      summary: Get detail route by ID
+      parameters:
+      - name: detail_route_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /airplanes:
+    get:
+      summary: Get all airplanes
+      responses:
+        200:
+          description: Success
+          content: {}
+  /airplanes/{airplane_id}:
+    get:
+      summary: Get airplane by ID
+      parameters:
+      - name: airplane_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /seats:
+    get:
+      summary: Get all seats
+      responses:
+        200:
+          description: Success
+          content: {}
+  /seats/{seat_id}:
+    get:
+      summary: Get seat by ID
+      parameters:
+      - name: seat_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /flight_class:
+    get:
+      summary: Get all flight classes
+      responses:
+        200:
+          description: Success
+          content: {}
+    post:
+      summary: Create a new flight class
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/FlightClass'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: flight_class
+  /flight_class/{class_id}:
+    get:
+      summary: Get flight class by ID
+      parameters:
+      - name: class_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+    put:
+      summary: Update flight class by ID
+      parameters:
+      - name: class_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/FlightClass'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: flight_class
+    delete:
+      summary: Delete flight class by ID
+      parameters:
+      - name: class_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+  /airports:
+    get:
+      summary: Get all airports
+      responses:
+        200:
+          description: Success
+          content: {}
+    post:
+      summary: Create a new airport
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Airport'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: airport
+  /airports/{airport_id}:
+    get:
+      summary: Get airport by ID
+      parameters:
+      - name: airport_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+    put:
+      summary: Update airport by ID
+      parameters:
+      - name: airport_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Airport'
+        required: true
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-codegen-request-body-name: airport
+    delete:
+      summary: Delete airport by ID
+      parameters:
+      - name: airport_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content: {}
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        user_id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    Notification:
+      type: object
+      properties:
+        notification_id:
+          type: string
+        user_id:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+    Payment:
+      type: object
+      properties:
+        payment_id:
+          type: string
+        transaction_id:
+          type: string
+        amount:
+          type: number
+        payment_date:
+          type: string
+    Transaction:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+        customer_id:
+          type: string
+        booking_id:
+          type: string
+        payment_status:
+          type: string
+        transaction_date:
+          type: string
+    Ticket:
+      type: object
+      properties:
+        ticket_id:
+          type: string
+        transaction_id:
+          type: string
+        flight_id:
+          type: string
+        seat_id:
+          type: string
+        passenger_id:
+          type: string
+        ticket_status:
+          type: string
+    Passenger:
+      type: object
+      properties:
+        passenger_id:
+          type: string
+        name:
+          type: string
+        age:
+          type: integer
+        gender:
+          type: string
+    TypeOfPassenger:
+      type: object
+      properties:
+        type_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+    Discount:
+      type: object
+      properties:
+        discount_id:
+          type: string
+        code:
+          type: string
+        amount:
+          type: number
+        expiration_date:
+          type: string
+    RegionCountry:
+      type: object
+      properties:
+        region_id:
+          type: string
+        region_name:
+          type: string
+        countries:
+          type: array
+          items:
+            type: string
+    Route:
+      type: object
+      properties:
+        route_id:
+          type: string
+        origin:
+          type: string
+        destination:
+          type: string
+        distance:
+          type: number
+    DetailRoute:
+      type: object
+      properties:
+        detail_route_id:
+          type: string
+        route_id:
+          type: string
+        airline:
+          type: string
+        duration:
+          type: string
+        departure_time:
+          type: string
+        arrival_time:
+          type: string
+    Airplane:
+      type: object
+      properties:
+        airplane_id:
+          type: string
+        model:
+          type: string
+        capacity:
+          type: integer
+    Seat:
+      type: object
+      properties:
+        seat_id:
+          type: string
+        airplane_id:
+          type: string
+        seat_number:
+          type: string
+        seat_class:
+          type: string
+    FlightClass:
+      type: object
+      properties:
+        class_id:
+          type: string
+        class_name:
+          type: string
+        description:
+          type: string
+    Airport:
+      type: object
+      properties:
+        airport_id:
+          type: string
+        airport_name:
+          type: string
+        city:
+          type: string
