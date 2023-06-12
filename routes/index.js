@@ -11,7 +11,7 @@ router.get("/", (req, res) =>
 );
 
 router.get("/flights", flights.show_by_query_params);
-// router.get("/flights/favorite-country", flights.most_visited);
+router.get("/flights/favorite-country", flights.most_visited_city);
 router.get("/flights/:id", flights.show_by_Id);
 router.post("/transactions", transactions.store);
 

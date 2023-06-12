@@ -110,34 +110,42 @@ module.exports = {
   },
 
   // get flights by most visited countries
-  // most_visited: async (req, res, next) => {
-  //   try {
-  //     const flights = Transactions.findAll({
-  //       attributes: [[Sequelize.fn('COUNT', Sequelize.col('id'))]],
-  //       include: [
-  //         {
-  //           model: Flights,
-  //           as: 'flight',
-  //           attributes: ['id', 'price'],
-  //           include: [
-  //             {
-  //               model: Airports,
-  //               attributes: ['city', 'country', 'n_country'],
-  //               as: 'flight_destination'
-  //             },
-  //           ]
-  //         }
-  //       ],
-  //       group: ['Airports.country', 'Transaction.id']
-  //     })
+  most_visited_city: async (req, res, next) => {
+    try {
+      const flights = await Transactions.findAll({
+        attributes: [[Sequelize.fn('COUNT', Sequelize.col('Transactions.id')), 'total_transaction']],
+        include: [
+          {
+            model: Flights,
+            attributes: ['id'],
+            as: 'flight',
+            include: [
+              {
+                model: Airports,
+                attributes: ['id', 'city', 'country'],
+                as: 'flight_destination'
+              },
+            ]
+          }
+        ],
+        group: ['flight.id', 'city', "flight->flight_destination.id"]
+      })
 
-  //     return res.status(200).json({
-  //       status: true,
-  //       message: 'success',
-  //       data: flights
-  //     })
-  //   } catch (error) {
-  //     next(error)
-  //   }
-  // },
+      if (flights.length < 1) {
+        return res.status(404).json({
+          status: false,
+          message: 'No transaction data yet',
+          data: flights
+        })
+      }
+
+      return res.status(200).json({
+        status: true,
+        message: 'success',
+        data: flights
+      })
+    } catch (error) {
+      next(error)
+    }
+  },
 }
