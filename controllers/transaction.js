@@ -1,120 +1,57 @@
-const data = require("../");
-const fs = require("fs");
+const { Transactions, Detail_transaction, Passengers } = require('../db/models');
 
 module.exports = {
-  // CRUD for Transaction
-  indexTransactions: (req, res, next) => {
+  // (POST) transaction
+  store: async (req, res, next) => {
     try {
-      return res.status(200).json({
-        message: "success",
-        data: data.transactions,
+      const {user_id, flight_id, passengers} = req.body;
+
+      if (!user_id || !flight_id || passengers.length < 1) {
+        return res.status(400).json({
+          status: false,
+          message: 'user_id, flight_id, and passengers data are required.',
+          data: null
+        })
+      }
+
+      if (typeof passengers != 'object') {
+        return res.status(400).json({
+          status: false,
+          message: 'passengers data type must be an object.',
+          data: null
+        })
+      }
+
+      // create data : transaksi, detail_transaksi, passengers
+      const transaction = await Transactions.create({user_id, flight_id})
+
+      // create transaction dengan user_id dan flight_id dengan tanggal yang sama sebaiknya gagal dicreate
+      // mengurangi jumlah kursi pada tabel flights
+
+      passengers.forEach( async (passenger) => {
+        const data = await Passengers.create({
+          name: passenger.name,
+          date_of_birth: passenger.date_of_birth,
+          nationality: passenger.nationality,
+          ktp: passenger.ktp,
+          passport: passenger.passport,
+          passenger_type_id: passenger.passenger_type_id == 'adult'? 1 : 2,
+        })
+
+        const detail_transaksi = await Detail_transaction.create({transaction_id: transaction.id, passenger_id: data.id})
+        console.log(`CREATE PASSENGERS: ${JSON.stringify(detail_transaksi)}`)
       });
+      
+      return res.status(400).json({
+        status: true,
+        message: 'success',
+        data: {
+          transaction,
+          passengers
+        }
+      })
     } catch (error) {
-      next(err);
+      next(error)
     }
-  },
-
-  showTransaction: (req, res, next) => {
-    try {
-      const { transaction_id } = req.params;
-
-      let filteredTransaction = data.transactions.filter(
-        (transaction) => transaction.id == transaction_id
-      );
-
-      if (filteredTransaction.length == 0) {
-        return res.status(404).json({
-          message: `Transaction with id ${transaction_id} does not exist`,
-        });
-      }
-
-      return res.status(200).json({
-        message: "success",
-        data: filteredTransaction[0],
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  storeTransaction: (req, res, next) => {
-    try {
-      let newTransaction = {
-        id: data.next_transaction_id++,
-        user_id: req.body.user_id,
-        ticket_id: req.body.ticket_id,
-        quantity: req.body.quantity,
-      };
-
-      data.transactions.push(newTransaction);
-
-      fs.writeFileSync("./db/data.json", JSON.stringify(data, null, "\t"));
-
-      return res.status(201).json({
-        message: "Transaction created!",
-        data: newTransaction,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  updateTransaction: (req, res, next) => {
-    try {
-      const { transaction_id } = req.params;
-      const { user_id, ticket_id, quantity } = req.body;
-
-      const index = data.transactions.findIndex(
-        (transaction) => transaction.id == transaction_id
-      );
-      if (index < 0) {
-        return res.status(404).json({
-          message: `Transaction with id ${transaction_id} does not exist`,
-        });
-      }
-
-      if (user_id) {
-        data.transactions[index].user_id = user_id;
-      }
-      if (ticket_id) {
-        data.transactions[index].ticket_id = ticket_id;
-      }
-      if (quantity) {
-        data.transactions[index].quantity = quantity;
-      }
-
-      fs.writeFileSync("./db/data.json", JSON.stringify(data, null, "\t"));
-
-      return res.status(200).json({
-        message: "success",
-        data: data.transactions[index],
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  destroyTransaction: (req, res, next) => {
-    try {
-      const { transaction_id } = req.params;
-
-      const index = data.transactions.findIndex(
-        (transaction) => transaction.id == transaction_id
-      );
-      if (index < 0) {
-        return res.status(404).json({
-          message: `Transaction with id ${transaction_id} does not exist`,
-        });
-      }
-
-      data.transactions.splice(index, 1);
-
-      return res.status(200).json({
-        message: "success",
-        data: data.transactions,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-};
+  }
+}

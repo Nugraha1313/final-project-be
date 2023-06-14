@@ -3,7 +3,7 @@ info:
   title: Sky Ticket API
   version: 1.0.0
 servers:
-- url: /http:localhost:3000
+  - url: /http:localhost:3000
 paths:
   /users:
     get:
@@ -16,9 +16,9 @@ paths:
       summary: Create a new user
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
         required: true
       responses:
         200:
@@ -29,11 +29,11 @@ paths:
     get:
       summary: Get user by ID
       parameters:
-      - name: user_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -41,16 +41,16 @@ paths:
     put:
       summary: Update user by ID
       parameters:
-      - name: user_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
         required: true
       responses:
         200:
@@ -60,11 +60,11 @@ paths:
     delete:
       summary: Delete user by ID
       parameters:
-      - name: user_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -81,9 +81,9 @@ paths:
       summary: Process payment
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Payment'
+              $ref: "#/components/schemas/Payment"
         required: true
       responses:
         200:
@@ -101,9 +101,9 @@ paths:
       summary: Create a new transaction
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Transaction'
+              $ref: "#/components/schemas/Transaction"
         required: true
       responses:
         200:
@@ -114,11 +114,11 @@ paths:
     get:
       summary: Get transaction by ID
       parameters:
-      - name: transaction_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: transaction_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -126,16 +126,16 @@ paths:
     put:
       summary: Update transaction by ID
       parameters:
-      - name: transaction_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: transaction_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Transaction'
+              $ref: "#/components/schemas/Transaction"
         required: true
       responses:
         200:
@@ -145,11 +145,11 @@ paths:
     delete:
       summary: Delete transaction by ID
       parameters:
-      - name: transaction_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: transaction_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -165,9 +165,9 @@ paths:
       summary: Create a new ticket
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Ticket'
+              $ref: "#/components/schemas/Ticket"
         required: true
       responses:
         200:
@@ -178,11 +178,11 @@ paths:
     get:
       summary: Get ticket by ID
       parameters:
-      - name: ticket_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: ticket_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -190,16 +190,16 @@ paths:
     put:
       summary: Update ticket by ID
       parameters:
-      - name: ticket_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: ticket_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Ticket'
+              $ref: "#/components/schemas/Ticket"
         required: true
       responses:
         200:
@@ -209,11 +209,11 @@ paths:
     delete:
       summary: Delete ticket by ID
       parameters:
-      - name: ticket_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: ticket_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -229,9 +229,9 @@ paths:
       summary: Create a new passenger
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Passenger'
+              $ref: "#/components/schemas/Passenger"
         required: true
       responses:
         200:
@@ -242,11 +242,11 @@ paths:
     get:
       summary: Get passenger by ID
       parameters:
-      - name: passenger_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: passenger_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -254,16 +254,16 @@ paths:
     put:
       summary: Update passenger by ID
       parameters:
-      - name: passenger_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: passenger_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Passenger'
+              $ref: "#/components/schemas/Passenger"
         required: true
       responses:
         200:
@@ -273,11 +273,11 @@ paths:
     delete:
       summary: Delete passenger by ID
       parameters:
-      - name: passenger_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: passenger_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -293,9 +293,9 @@ paths:
       summary: Create a new type of passenger
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/TypeOfPassenger'
+              $ref: "#/components/schemas/TypeOfPassenger"
         required: true
       responses:
         200:
@@ -306,11 +306,11 @@ paths:
     get:
       summary: Get type of passenger by ID
       parameters:
-      - name: type_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: type_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -318,16 +318,16 @@ paths:
     put:
       summary: Update type of passenger by ID
       parameters:
-      - name: type_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: type_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/TypeOfPassenger'
+              $ref: "#/components/schemas/TypeOfPassenger"
         required: true
       responses:
         200:
@@ -337,11 +337,11 @@ paths:
     delete:
       summary: Delete type of passenger by ID
       parameters:
-      - name: type_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: type_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -357,9 +357,9 @@ paths:
       summary: Create a new discount
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Discount'
+              $ref: "#/components/schemas/Discount"
         required: true
       responses:
         200:
@@ -370,11 +370,11 @@ paths:
     get:
       summary: Get discount by ID
       parameters:
-      - name: discount_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: discount_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -382,16 +382,16 @@ paths:
     put:
       summary: Update discount by ID
       parameters:
-      - name: discount_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: discount_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Discount'
+              $ref: "#/components/schemas/Discount"
         required: true
       responses:
         200:
@@ -401,11 +401,11 @@ paths:
     delete:
       summary: Delete discount by ID
       parameters:
-      - name: discount_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: discount_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -428,11 +428,11 @@ paths:
     get:
       summary: Get route by ID
       parameters:
-      - name: route_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: route_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -448,11 +448,11 @@ paths:
     get:
       summary: Get detail route by ID
       parameters:
-      - name: detail_route_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: detail_route_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -468,11 +468,11 @@ paths:
     get:
       summary: Get airplane by ID
       parameters:
-      - name: airplane_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: airplane_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -488,11 +488,11 @@ paths:
     get:
       summary: Get seat by ID
       parameters:
-      - name: seat_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: seat_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -508,9 +508,9 @@ paths:
       summary: Create a new flight class
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/FlightClass'
+              $ref: "#/components/schemas/FlightClass"
         required: true
       responses:
         200:
@@ -521,11 +521,11 @@ paths:
     get:
       summary: Get flight class by ID
       parameters:
-      - name: class_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: class_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -533,16 +533,16 @@ paths:
     put:
       summary: Update flight class by ID
       parameters:
-      - name: class_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: class_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/FlightClass'
+              $ref: "#/components/schemas/FlightClass"
         required: true
       responses:
         200:
@@ -552,11 +552,11 @@ paths:
     delete:
       summary: Delete flight class by ID
       parameters:
-      - name: class_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: class_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -572,9 +572,9 @@ paths:
       summary: Create a new airport
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Airport'
+              $ref: "#/components/schemas/Airport"
         required: true
       responses:
         200:
@@ -585,11 +585,11 @@ paths:
     get:
       summary: Get airport by ID
       parameters:
-      - name: airport_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: airport_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success
@@ -597,16 +597,16 @@ paths:
     put:
       summary: Update airport by ID
       parameters:
-      - name: airport_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: airport_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
-          '*/*':
+          "*/*":
             schema:
-              $ref: '#/components/schemas/Airport'
+              $ref: "#/components/schemas/Airport"
         required: true
       responses:
         200:
@@ -616,11 +616,11 @@ paths:
     delete:
       summary: Delete airport by ID
       parameters:
-      - name: airport_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: airport_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Success

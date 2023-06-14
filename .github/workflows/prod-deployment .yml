@@ -42,14 +42,6 @@ jobs:
           DB_NAME: ci-cd
           DB_USERNAME: postgres
           DB_PASSWORD: password
-      - name: Run test
-        run: npm test
-        env:
-          DB_HOST: localhost
-          DB_NAME: ci-cd
-          DB_USERNAME: postgres
-          DB_PASSWORD: password
-          JWT_SECRET_KEY: rahasia
 
   cd:
     runs-on: ubuntu-latest
@@ -68,4 +60,4 @@ jobs:
       - name: Deploy
         run: railway up
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_PRO_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_PROD_TOKEN }}

@@ -1,25 +1,41 @@
-require('dotenv').config(); // Mengimpor dotenv
-const express = require('express');
+require("dotenv").config();
+
+const express = require("express");
+const morgan = require("morgan");
+const swaggerUI = require("swagger-ui-express");
+const YAML = require("yaml");
+const fs = require("fs");
+const cors = require("cors");
+const file = fs.readFileSync("./documentationSwagger.yaml", "utf8");
+const swaggerDocument = YAML.parse(file);
+const expressListRoutes = require("express-list-routes");
+const bodyParser = require("body-parser");
+
 const app = express();
-const bodyParser = require('body-parser');
+const router = require("./routes");
 
 app.use(bodyParser.json());
+app.use(cors());
+app.set("view engine", "ejs");
+app.use(morgan("dev"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
-// Middleware untuk memeriksa setiap permintaan
+app.use(router);
+
+// 404
 app.use((req, res, next) => {
-  console.log('Middleware dijalankan');
-  // Lakukan tindakan yang diperlukan di sini
-  next(); // Lanjutkan ke middleware atau endpoint berikutnya
+  return res.status(404).json({
+    message: "Not Found",
+  });
 });
 
-// Endpoint dan implementasinya
-app.post('', (req, res) => {
-  // Implementasi pemesanan tiket pesawat
-  res.send('Pemesanan tiket berhasil');
+// 500
+app.use((err, req, res, next) => {
+  return res.status(500).json({
+    message: err.message,
+  });
 });
 
-// Server
-const port = process.env.PORT || 3000; // Mengambil port dari variabel lingkungan atau menggunakan default 3000
-app.listen(port, () => {
-  console.log(`Server berjalan di http://localhost:${port}`);
-});
+module.exports = app

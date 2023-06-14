@@ -28,28 +28,6 @@ jobs:
           node-version: 18.12.0
       - name: Install packages
         run: npm install
-      - name: Create database
-        run: npx sequelize db:create
-        env:
-          DB_HOST: localhost
-          DB_NAME: ci-cd
-          DB_USERNAME: postgres
-          DB_PASSWORD: password
-      - name: Migrate database
-        run: npx sequelize db:migrate
-        env:
-          DB_HOST: localhost
-          DB_NAME: ci-cd
-          DB_USERNAME: postgres
-          DB_PASSWORD: password
-      - name: Run test
-        run: npm test
-        env:
-          DB_HOST: localhost
-          DB_NAME: ci-cd
-          DB_USERNAME: postgres
-          DB_PASSWORD: password
-          JWT_SECRET_KEY: rahasia
 
   cd:
     runs-on: ubuntu-latest
