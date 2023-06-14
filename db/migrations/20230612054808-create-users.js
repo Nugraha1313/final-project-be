@@ -25,13 +25,16 @@ module.exports = {
         type: Sequelize.STRING
       },
       role: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 'user'
       },
       user_type: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 'basic'
       },
       is_verified: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,
