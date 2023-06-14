@@ -23,7 +23,6 @@ app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
-
 app.use(router);
 
 // 404
@@ -40,4 +39,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-module.exports = app
+module.exports = app;
