@@ -14,8 +14,6 @@ const bodyParser = require("body-parser");
 const app = express();
 const router = require("./routes");
 
-const { HTTP_PORT = 3000 } = process.env;
-
 app.use(bodyParser.json());
 app.use(cors());
 app.set("view engine", "ejs");
