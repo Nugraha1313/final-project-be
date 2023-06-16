@@ -1,5 +1,0 @@
-MIGRATE SPECIFIC FILE
-sequelize db:migrate:undo:all --to 20230612060617-create-detail-transaction.js
-
-RUN SPECIFIC SEEDER FILE
-sequelize db:seed --seed 20230609125329-Flights.js
