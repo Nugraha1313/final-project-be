@@ -10,11 +10,12 @@ const file = fs.readFileSync("./documentationSwagger.yaml", "utf8");
 const swaggerDocument = YAML.parse(file);
 const expressListRoutes = require("express-list-routes");
 const bodyParser = require("body-parser");
-
+const helmet = require('helmet')
 const app = express();
 const router = require("./routes");
 
 app.use(bodyParser.json());
+app.use(helmet())
 app.use(cors());
 app.set("view engine", "ejs");
 app.use(morgan("dev"));
@@ -37,21 +38,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-// var otp = Math.random();
-// otp = otp * 1000000;
-// otp = parseInt(otp);
-// console.log(otp);
-
 // test otp
-const otpGenerator = require('otp-generator');
-const otp = otpGenerator.generate(6, {
-  digits: true,
-  alphabets: false,
-  upperCase: false,
-  specialChars: false,
-});
-console.log("Kode OTP:", otp);
-
-
+// const otpGenerator = require('otp-generator');
+// const otp = otpGenerator.generate(6, {
+//   digits: true,
+//   alphabets: false,
+//   upperCase: false,
+//   specialChars: false,
+// });
+// console.log("Kode OTP:", otp);
 
 module.exports = app;

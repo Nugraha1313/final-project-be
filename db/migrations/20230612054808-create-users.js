@@ -24,6 +24,9 @@ module.exports = {
       otp: {
         type: Sequelize.STRING
       },
+      otp_expiration_time: {
+        type: Sequelize.DATE
+      },
       role: {
         type: Sequelize.STRING,
         defaultValue: 'user'

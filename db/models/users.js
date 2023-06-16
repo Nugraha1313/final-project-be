@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     phone_number: DataTypes.STRING,
     otp: DataTypes.STRING,
+    otp_expiration_time: DataTypes.DATE,
     role: DataTypes.STRING,
     user_type: DataTypes.STRING,
     is_verified: DataTypes.BOOLEAN
