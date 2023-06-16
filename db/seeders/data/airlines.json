@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Batik Air",
+    "short_name": "Batik",
+    "iata_code": "ID",
+    "icon_url": "https://ik.imagekit.io/tvlk/image/imageResource/2019/12/13/1576208649600-12471f9b7ffa159361f7bbbfb63065ee.png?tr=q-75"
+  },
+  {
+    "name": "Citilink",
+    "short_name": "Citilink",
+    "iata_code": "QG",
+    "icon_url": "https://ik.imagekit.io/tvlk/image/imageResource/2015/12/17/1450350561012-6584b693edd67d75cfc25ecff41c5704.png?tr=q-75"
+  },
+  {
+    "name": "Garuda Indonesia",
+    "short_name": "Garuda",
+    "iata_code": "GA",
+    "icon_url": "https://ik.imagekit.io/tvlk/image/imageResource/2019/12/12/1576140134467-906ded3638e9045d664adc40caa8ec47.png?tr=q-75"
+  },
+  {
+    "name": "Lion Air",
+    "short_name": "Lion",
+    "iata_code": "JT",
+    "icon_url": "https://ik.imagekit.io/tvlk/image/imageResource/2015/12/17/1450349861201-09ec8f298222a73d66e8e96aa3b918f0.png?tr=q-75"
+  },
+  {
+    "name": "NAM Air",
+    "short_name": "NAM",
+    "iata_code": "NM",
+    "icon_url": "https://ik.imagekit.io/tvlk/image/imageResource/2015/12/17/1450350497772-d343e9b6823d18054324b818b999c394.png?tr=q-75"
+  },
+  {
+    "name": "Sriwijaya Air",
+    "short_name": "Sriwijaya",
+    "iata_code": "SJ",
+    "icon_url": "https://ik.imagekit.io/tvlk/image/imageResource/2019/12/12/1576139484141-e3bb88cae8d9f1f89d9b3d1b8788c450.png?tr=q-75"
+  },
+  {
+    "name": "TransNusa",
+    "short_name": "TransNusa",
+    "iata_code": "8B",
+    "icon_url": "https://ik.imagekit.io/tvlk/image/imageResource/2022/05/05/1651724293186-ee122b2d6b66f97e7262b4e2db977e1b.png?tr=q-75"
+  },
+  {
+    "name": "Trigana Air",
+    "short_name": "Trigana",
+    "iata_code": "IL",
+    "icon_url": "https://ik.imagekit.io/tvlk/image/imageResource/2016/12/27/1482845148999-c4273ca0398aa949d7c6d23cee5ecb5a.png?tr=q-75"
+  },
+  {
+    "name": "Wings Air",
+    "short_name": "Wings",
+    "iata_code": "IW",
+    "icon_url": "https://ik.imagekit.io/tvlk/image/imageResource/2015/12/17/1450349805026-5fecb4ceb5f79e38f2a5ae50f33b813e.png?tr=q-75"
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "status": true,
+  "message": "OK",
+  "err": null,
+  "data": [
+      {
+          "flight_number": "ID-7580",
+          "departure_airport_id": 2,
+          "airplane_id": 7,
+          "airline_id": 1,
+          "arrival_airport_id": 19,
+          "class": "ECONOMY",
+          "price": 1007200,
+          "departure_terminal_name": null,
+          "arrival_terminal_name": null,
+          "flight_date": "2023-06-20",
+          "departure_time": "09:15",
+          "arrival_time": "10:40",
+          "flight_duration": 85,
+          "departure_timestamp": 1687227300,
+          "arrival_timestamp": 1687232400,
+          "free_baggage": 20,
+          "cabin_baggage": 7,
+          "capacity": 192
+      }
+  ]
+}

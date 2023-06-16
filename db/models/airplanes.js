@@ -12,18 +12,23 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Airplanes.hasMany(models.Flights, {
         foreignKey: "airplane_id",
-        as: 'flights'
+        as: 'flight'
       })
     }
   }
   Airplanes.init({
-    name: DataTypes.STRING,
-    baggage: DataTypes.INTEGER,
-    cabin_baggage: DataTypes.INTEGER,
-    total_seats: DataTypes.INTEGER
+    model: DataTypes.STRING,
+    code: DataTypes.STRING,
+    airline_code: DataTypes.STRING,
+    seat_layout: DataTypes.STRING,
+    seat_pitch: DataTypes.STRING,
+    seat_type: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Airplanes',
+    tableName: 'airplanes',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
   return Airplanes;
 };

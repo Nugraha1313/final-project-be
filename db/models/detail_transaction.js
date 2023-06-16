@@ -33,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Detail_transaction',
+    tableName: 'detail_transaction',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
   return Detail_transaction;
 };

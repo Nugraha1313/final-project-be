@@ -16,41 +16,51 @@ module.exports = (sequelize, DataTypes) => {
       })
 
       Flights.belongsTo(models.Airports, {
-        foreignKey: "departure",
-        as: "flight_departure"
+        foreignKey: "departure_airport_id",
+        as: "departure"
       })
 
       Flights.belongsTo(models.Airports, {
-        foreignKey: "destination",
-        as: "flight_destination"
+        foreignKey: "arrival_airport_id",
+        as: "arrival"
       })
-
-      Flights.belongsTo(models.Region_category, {
-        foreignKey: "region_category_id",
-        as: "region_category"
-      })
-
+      
       Flights.hasMany(models.Transactions, {
         foreignKey: 'flight_id',
         as: 'transaction'
       })
+
+      Flights.belongsTo(models.Airlines, {
+        foreignKey: 'airline_id',
+        as: 'airline'
+      })
     }
   }
   Flights.init({
+    flight_number: DataTypes.STRING,
+    departure_airport_id: DataTypes.INTEGER,
     airplane_id: DataTypes.INTEGER,
-    departure: DataTypes.INTEGER,
-    destination: DataTypes.INTEGER,
-    departure_date: DataTypes.DATE,
-    arrival_date: DataTypes.DATE,
+    airline_id: DataTypes.INTEGER,
+    arrival_airport_id: DataTypes.INTEGER,
+    class: DataTypes.STRING,
+    price: DataTypes.INTEGER,
+    departure_terminal_name: DataTypes.STRING,
+    arrival_terminal_name: DataTypes.STRING,
+    flight_date: DataTypes.STRING,
     departure_time: DataTypes.STRING,
     arrival_time: DataTypes.STRING,
-    available_seats: DataTypes.INTEGER,
-    price: DataTypes.INTEGER,
-    operation_status: DataTypes.BOOLEAN,
-    region_category_id: DataTypes.INTEGER
+    flight_duration: DataTypes.INTEGER,
+    departure_timestamp: DataTypes.INTEGER,
+    arrival_timestamp: DataTypes.INTEGER,
+    free_baggage: DataTypes.INTEGER,
+    cabin_baggage: DataTypes.INTEGER,
+    capacity: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Flights',
+    tableName: 'flights',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
   return Flights;
 };

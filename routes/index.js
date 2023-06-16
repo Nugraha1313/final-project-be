@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const flights = require('../controllers/flights')
-const transactions = require('../controllers/transactions')
+const flights = require('../controllers/flights');
+const transactions = require('../controllers/transactions');
+const payments = require('../controllers/payments');
+const tickets = require('../controllers/tickets');
+const users = require('../controllers/users');
 
 router.get("/", (req, res) =>
   res.status(200).json({
@@ -10,9 +13,17 @@ router.get("/", (req, res) =>
   })
 );
 
-router.get("/flights", flights.show_by_query_params);
-router.get("/flights/favorite-country", flights.most_visited_city);
+router.get("/users/:id", users.show);
+router.put("/users/:id", users.update);
+
+router.post("/flights", flights.search);
+router.get("/flights/favorite-city", flights.most_visited_city);
 router.get("/flights/:id", flights.show_by_Id);
+
+router.get("/transactions/:user_id", transactions.show);
 router.post("/transactions", transactions.store);
+
+router.post("/payments", payments.complete);
+router.get("/tickets/:transaction_id", tickets.show);
 
 module.exports = router;

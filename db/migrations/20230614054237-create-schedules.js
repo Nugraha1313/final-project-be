@@ -2,29 +2,17 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('flights', {
+    await queryInterface.createTable('schedules', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      flight_number: {
+      departure_airport: {
         type: Sequelize.STRING
       },
-      departure_airport_id: {
-        type: Sequelize.INTEGER
-      },
-      airplane_id: {
-        type: Sequelize.INTEGER
-      },
-      airline_id: {
-        type: Sequelize.INTEGER
-      },
-      arrival_airport_id: {
-        type: Sequelize.INTEGER
-      },
-      class: {
+      arrival_airport: {
         type: Sequelize.STRING
       },
       price: {
@@ -36,23 +24,14 @@ module.exports = {
       arrival_terminal_name: {
         type: Sequelize.STRING
       },
-      flight_date: {
+      flight_number: {
         type: Sequelize.STRING
       },
-      departure_time: {
+      airline_code: {
         type: Sequelize.STRING
       },
-      arrival_time: {
+      airplane_code: {
         type: Sequelize.STRING
-      },
-      flight_duration: {
-        type: Sequelize.INTEGER
-      },
-      departure_timestamp: {
-        type: Sequelize.INTEGER
-      },
-      arrival_timestamp: {
-        type: Sequelize.INTEGER
       },
       free_baggage: {
         type: Sequelize.INTEGER
@@ -60,8 +39,17 @@ module.exports = {
       cabin_baggage: {
         type: Sequelize.INTEGER
       },
-      capacity: {
+      flight_day: {
+        type: Sequelize.STRING
+      },
+      departure_base_timestamp: {
         type: Sequelize.INTEGER
+      },
+      arrival_base_timestamp: {
+        type: Sequelize.INTEGER
+      },
+      class: {
+        type: Sequelize.STRING
       },
       created_at: {
         allowNull: false,
@@ -74,6 +62,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('flights');
+    await queryInterface.dropTable('schedules');
   }
 };
