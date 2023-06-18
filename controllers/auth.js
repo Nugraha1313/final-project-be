@@ -439,7 +439,7 @@ module.exports = {
     return res.status(201).json({
       status: true,
       message:
-        "OTP has been sent, expired in 10 minutes, please check your email!",
+        "OTP has been sent, expired in 1 minutes, please check your email!",
       data: null,
     });
   },
