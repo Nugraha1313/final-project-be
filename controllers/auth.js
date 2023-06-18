@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("../utils/nodemailer");
 // const imagekit = require("../utils/imageKit");
-// const oauth2 = require("../utils/oauth2");
+const oauth2 = require("../utils/oauth2");
 const validator = require("validator");
 const fastestValidator = require("fastest-validator");
 const v = new fastestValidator();
@@ -303,52 +303,52 @@ module.exports = {
       throw err;
     }
   },
-  //   loginGoogle: async (req, res) => {
-  //     try {
-  //       const { code } = req.query;
-  //       if (!code) {
-  //         const googleLoginUrl = oauth2.generateAuthUrl();
-  //         return res.redirect(googleLoginUrl);
-  //       }
+    loginGoogle: async (req, res) => {
+      try {
+        const { code } = req.query;
+        if (!code) {
+          const googleLoginUrl = oauth2.generateAuthUrl();
+          return res.redirect(googleLoginUrl);
+        }
 
-  //       await oauth2.setCreadentials(code);
-  //       const { data } = await oauth2.getUserData();
+        await oauth2.setCreadentials(code);
+        const { data } = await oauth2.getUserData();
 
-  //       let user = await User.findOne({
-  //         where: { email: data.email },
-  //       });
-  //       if (!user) {
-  //         user = await User.create({
-  //           name: data.name,
-  //           email: data.email,
-  //           is_active: true,
-  //           is_google_account: true,
-  //         });
-  //       } else {
-  //         await User.update(
-  //           { is_active: true, is_google_account:true },
-  //           { where: { email: data.email } }
-  //         );
-  //       }
+        let user = await Users.findOne({
+          where: { email: data.email },
+        });
+        if (!user) {
+          user = await Users.create({
+            name: data.name,
+            email: data.email,
+            is_verified: true,
+            user_type: 'google',
+          });
+        } else {
+          await Users.update(
+            { is_verified: true, user_type:'google' },
+            { where: { email: data.email } }
+          );
+        }
 
-  //       const payload = {
-  //         id: user.id,
-  //         role: user.role,
-  //       };
+        const payload = {
+          id: user.id,
+          role: user.role,
+        };
 
-  //       const token = await jwt.sign(payload, JWT_SECRET_KEY);
+        const token = await jwt.sign(payload, JWT_SECRET_KEY);
 
-  //       return res.status(200).json({
-  //         status: true,
-  //         message: "login success!",
-  //         data: {
-  //           token: token,
-  //         },
-  //       });
-  //     } catch (err) {
-  //       throw err;
-  //     }
-  //   },
+        return res.status(200).json({
+          status: true,
+          message: "login success!",
+          data: {
+            token: token,
+          },
+        });
+      } catch (err) {
+        throw err;
+      }
+    },
   resendOTP: async (req, res) => {
     const { email } = req.body;
 
