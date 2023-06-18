@@ -23,6 +23,7 @@
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "detect-phonenumber": "^1.0.5",
     "dotenv": "^16.1.4",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
@@ -40,12 +41,14 @@
     "otp-generator": "^4.0.1",
     "pg": "^8.11.0",
     "pg-hstore": "^2.3.4",
+    "phone": "^3.1.37",
     "randomstring": "^1.3.0",
     "sendotp": "^1.2.9",
     "sequelize": "^6.32.0",
     "sequelize-auto": "^0.8.8",
     "sequelize-cli": "^6.6.1",
     "swagger-ui-express": "^4.6.3",
+    "validate-phone-number-node-js": "^0.0.1",
     "yaml": "^2.3.1"
   }
 }

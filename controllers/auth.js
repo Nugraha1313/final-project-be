@@ -6,10 +6,11 @@ const nodemailer = require("../utils/nodemailer");
 const validator = require("validator");
 const fastestValidator = require("fastest-validator");
 const v = new fastestValidator();
+// const phones = require("phone");
+// const detectPhonenumber = require("detect-phonenumber");
 let otpGenerator = require("otp-generator");
 const { Users } = require("../db/models");
-const { JWT_SECRET_KEY } = process.env;
-
+const { JWT_SECRET_KEY, API_HOST, FE_HOST } = process.env;
 // Function to Compares dates (expiration time and current time in our case)
 var dates = {
   convert: function (d) {
@@ -63,8 +64,7 @@ var dates = {
 module.exports = {
   register: async (req, res) => {
     try {
-      const { name, email, password, confirmPassword } = req.body;
-
+      const { name, email, phone_number, password, confirmPassword } = req.body;
       if (!name) {
         return res.status(400).json({
           status: false,
@@ -77,6 +77,14 @@ module.exports = {
         return res.status(400).json({
           status: false,
           message: "Email is required!",
+          data: null,
+        });
+      }
+
+      if (!phone_number) {
+        return res.status(400).json({
+          status: false,
+          message: "Phone Number is required!",
           data: null,
         });
       }
@@ -108,6 +116,23 @@ module.exports = {
           data: null,
         });
       }
+      // validator the phone number should number
+      // const validatorNumber = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+      const validatorNumber = new RegExp("^[0-9]+$");
+      const is_valid_number = validatorNumber.test(phone_number);
+      console.log("PHONE_NUMBER : ", phone_number);
+      if (
+        !is_valid_number ||
+        phone_number.length < 10 ||
+        phone_number.length > 13
+      ) {
+        return res.status(400).json({
+          status: false,
+          message: "Phone Number is not valid",
+          data: null,
+        });
+      }
+
       //   validator is it email or not
       if (!validator.isEmail(email)) {
         return res.status(400).json({
@@ -116,6 +141,7 @@ module.exports = {
           data: null,
         });
       }
+
       // check is password is strong or not using regular expression (regex)
       const strongPassword = new RegExp(
         "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})"
@@ -157,10 +183,10 @@ module.exports = {
         specialChars: false,
       });
       const now = new Date();
-      //   set to 10 minutes
-      const otp_expiration_time = AddMinutesToDate(now, 10);
-      console.log("KODE OTP : ", otp);
-      console.log("EXPIRED : ", otp_expiration_time);
+      //   set to 1 minutes
+      const otp_expiration_time = AddMinutesToDate(now, 1);
+      // console.log("KODE OTP : ", otp);
+      // console.log("EXPIRED : ", otp_expiration_time);
       //  hashing password
       const hashPassword = await bcrypt.hash(password, 10);
 
@@ -168,6 +194,7 @@ module.exports = {
       const newUser = await Users.create({
         name,
         email,
+        phone_number,
         password: hashPassword,
         otp,
         otp_expiration_time,
@@ -184,8 +211,6 @@ module.exports = {
       )}/auth/send-otp?token=${token}`;
 
       const html = await nodemailer.getHtml("send-otp.ejs", {
-        name: newUser.name,
-        url,
         otp,
       });
 
@@ -194,7 +219,7 @@ module.exports = {
       return res.status(201).json({
         status: true,
         message:
-          "OTP has been sent, expired in 10 minutes, please check your email!",
+          "OTP has been sent, expired in 1 minutes, please check your email!",
         data: null,
       });
     } catch (err) {
@@ -239,16 +264,6 @@ module.exports = {
           data: null,
         });
       }
-      // user is found but not verified
-      if (findUser && findUser.is_verified == false) {
-        return res.status(401).json({
-          status: false,
-          message:
-            "Account is not activated, please check your email, and verify the otp!",
-          data: null,
-        });
-      }
-
       // check password
       const checkPassword = await bcrypt.compare(password, findUser.password);
 
@@ -256,6 +271,15 @@ module.exports = {
         return res.status(400).json({
           status: false,
           message: "Password is incorrect",
+          data: null,
+        });
+      }
+      // user is found but not verified
+      if (findUser && findUser.is_verified == false) {
+        return res.status(401).json({
+          status: false,
+          message:
+            "Account is not activated, please check your email, and verify the otp!",
           data: null,
         });
       }
@@ -359,12 +383,15 @@ module.exports = {
     // validate if user is already request resend otp => to limit request
     const now = new Date();
     if (findUser.otp != null && findUser.otp_expiration_time != null) {
-      console.log("=========================================");
-      console.log("NOW : ", now);
-      console.log("EXPIRED : ", findUser.otp_expiration_time);
-      console.log("=========================================");
+      // console.log("=========================================");
+      // console.log("NOW : ", now);
+      // console.log("EXPIRED : ", findUser.otp_expiration_time);
+      // console.log("=========================================");
       // not expired
-      console.log("HASIL PERBADNINGAN : ", dates.compare(findUser.otp_expiration_time, now))
+      // console.log(
+      //   "HASIL PERBADNINGAN : ",
+      //   dates.compare(findUser.otp_expiration_time, now)
+      // );
       if (dates.compare(findUser.otp_expiration_time, now) == 1) {
         return res.status(400).json({
           status: false,
@@ -372,8 +399,6 @@ module.exports = {
             "You have already requested resend otp, check your email please",
           data: null,
         });
-      } else {
-        console.log("EXPIREDD CUYYYY");
       }
     }
 
@@ -388,8 +413,8 @@ module.exports = {
       upperCase: false,
       specialChars: false,
     });
-    //   set to 10 minutes
-    const otp_expiration_time = AddMinutesToDate(now, 10);
+    //   set to 1 minutes
+    const otp_expiration_time = AddMinutesToDate(now, 1);
     console.log("KODE OTP : ", generatedOTP);
     console.log("EXPIRED : ", otp_expiration_time);
 
@@ -573,37 +598,85 @@ module.exports = {
       throw error;
     }
   },
-  //   verifyEmail: async (req, res) => {
-  //     try {
-  //       const { token } = req.query;
-  //       if (!token) {
-  //         return res.status(400).json({
-  //           status: true,
-  //           message: "Token is invalid!",
-  //           data: null,
-  //         });
-  //       }
+  resetPassword: async (req, res, next) => {
+    try {
+      const { newPassword, confirmPassword } = req.body;
+      const { token } = req.query;
 
-  //       const data = await jwt.verify(token, JWT_SECRET_KEY);
-  //       const verify = await Users.update(
-  //         { is_verified: true },
-  //         { where: { id: data.id } }
-  //       );
-  //       if (verify[0] == 0) {
-  //         return res.status(400).json({
-  //           status: true,
-  //           message: "Activation account failed!",
-  //           data: null,
-  //         });
-  //       }
+      if (!token) {
+        return res.status(400).json({
+          status: false,
+          message: "invalid token!",
+        });
+      }
 
-  //       return res.status(200).json({
-  //         status: true,
-  //         message: "Activation account success!",
-  //         data: null,
-  //       });
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   },
+      let strongPassword = new RegExp(
+        "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})"
+      );
+
+      let check = strongPassword.test(newPassword);
+      if (!check)
+        return res.status(400).json({
+          status: false,
+          message:
+            "Password min 6 character, include a minimum of 1 lower case letter [a-z], a minimum of 1 upper case letter [A-Z] , and a minimum of 1 numeric character [0-9]",
+        });
+
+      if (newPassword != confirmPassword) {
+        return res.status(400).json({
+          status: false,
+          message: "password and confirm password doesn't match",
+        });
+      }
+
+      const payload = jwt.verify(token, JWT_SECRET_KEY);
+
+      const encryptedPassword = await bcrypt.hash(newPassword, 10);
+
+      const user = await Users.update(
+        { password: encryptedPassword },
+        { where: { id: payload.id } }
+      );
+
+      if (user) {
+        return res.status(200).json({
+          status: true,
+          message: "Success update password!",
+        });
+      }
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  forgotPassword: async (req, res, next) => {
+    try {
+      const { email } = req.body;
+
+      const user = await Users.findOne({ where: { email } });
+
+      if (!user) {
+        return res.status(404).json({
+          status: false,
+          message: "email not found!",
+        });
+      } else {
+        const payload = { id: user.id };
+        const token = jwt.sign(payload, JWT_SECRET_KEY);
+        const link = `${FE_HOST}/reset-password?token=${token}`;
+        const html = await nodemailer.getHtml("reset-password.ejs", {
+          name: user.name,
+          link: link,
+        });
+        // await nodemailer.sendEmail(user.email, "Reset your password", htmlEmail);
+        nodemailer.sendMail(email, "[TRIPP] Reset Password", html);
+      }
+      return res.status(200).json({
+        success: true,
+        message: "Success send link reset password to your email!",
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
 };
