@@ -9,18 +9,18 @@ const cors = require("cors");
 const file = fs.readFileSync("./documentationSwagger.yaml", "utf8");
 const swaggerDocument = YAML.parse(file);
 const bodyParser = require("body-parser");
-
+const helmet = require('helmet')
 const app = express();
 const router = require("./routes");
 
 app.use(bodyParser.json());
+app.use(helmet())
 app.use(cors());
 app.set("view engine", "ejs");
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
-
 app.use(router);
 
 // 404
@@ -44,4 +44,14 @@ app.use((err, req, res) => {
   });
 });
 
-module.exports = app
+// test otp
+// const otpGenerator = require('otp-generator');
+// const otp = otpGenerator.generate(6, {
+//   digits: true,
+//   alphabets: false,
+//   upperCase: false,
+//   specialChars: false,
+// });
+// console.log("Kode OTP:", otp);
+
+module.exports = app;
