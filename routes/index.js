@@ -5,6 +5,7 @@ const transactions = require('../controllers/transactions');
 const payments = require('../controllers/payments');
 const tickets = require('../controllers/tickets');
 const users = require('../controllers/users');
+const auth = require('./auth')
 
 router.get("/", (req, res) =>
   res.status(200).json({
@@ -13,6 +14,7 @@ router.get("/", (req, res) =>
   })
 );
 
+router.use('/auth', auth)
 router.get("/users/:id", users.show);
 router.put("/users/:id", users.update);
 

@@ -24,14 +24,20 @@ module.exports = {
       otp: {
         type: Sequelize.STRING
       },
+      otp_expiration_time: {
+        type: Sequelize.DATE
+      },
       role: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 'user'
       },
       user_type: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: 'basic'
       },
       is_verified: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       created_at: {
         allowNull: false,
