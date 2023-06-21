@@ -122,7 +122,8 @@ module.exports = {
           nationality: passenger.nationality,
           ktp: passenger.ktp,
           passport: passenger.passport,
-          negara_penerbit: passenger.issuing_country,
+          issuing_country: passenger.issuing_country,
+          expiration_date: passenger.expiration_date,
           passenger_type_id: passenger_type
         })
 

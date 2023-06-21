@@ -28,6 +28,8 @@ module.exports = (sequelize, DataTypes) => {
     nationality: DataTypes.STRING,
     ktp: DataTypes.STRING,
     passport: DataTypes.STRING,
+    issuing_country: DataTypes.STRING,
+    expiration_date: DataTypes.STRING,
     passenger_type_id: DataTypes.INTEGER
   }, {
     sequelize,
