@@ -9,7 +9,6 @@ const fs = require("fs");
 const cors = require("cors");
 const file = fs.readFileSync("./documentationSwagger.yaml", "utf8");
 const swaggerDocument = YAML.parse(file);
-const expressListRoutes = require("express-list-routes");
 const bodyParser = require("body-parser");
 const helmet = require('helmet')
 const app = express();
@@ -50,16 +49,23 @@ app.use(Sentry.Handlers.tracingHandler());
 app.use(router);
 
 // 404
-app.use((req, res, next) => {
+app.use((req, res) => {
   return res.status(404).json({
-    message: "Not Found",
+      status: false,
+      message: 'Not Found',
+      err: `Cannot find ${req.url}`,
+      data: null,
   });
 });
 
 // 500
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
+  console.log(err);
   return res.status(500).json({
-    message: err.message,
+      status: false,
+      message: 'Internal Server Error',
+      err: err.message,
+      data: null,
   });
 });
 

@@ -1,0 +1,162 @@
+[
+  {
+    "model": "Airbus A320",
+    "code": "AIRBUS-A320-32",
+    "airline_code": "8B",
+    "seat_layout": "3-3",
+    "seat_pitch": "32",
+    "seat_type": "STANDARD_LEGROOM"
+  },
+  {
+    "model": "COMAC ARJ21",
+    "code": "COMAC-ARJ21-31",
+    "airline_code": "8B",
+    "seat_layout": "2-3",
+    "seat_pitch": "31",
+    "seat_type": "STANDARD_LEGROOM"
+  },
+  {
+    "model": "Airbus A332",
+    "code": "AIRBUS-A332-31",
+    "airline_code": "GA",
+    "seat_layout": "3-3",
+    "seat_pitch": "31",
+    "seat_type": "ABOVE_AVERAGE_LEGROOM"
+  },
+  {
+    "model": "Boeing 737",
+    "code": "BOEING-737-31",
+    "airline_code": "GA",
+    "seat_layout": "3-3",
+    "seat_pitch": "31",
+    "seat_type": "ABOVE_AVERAGE_LEGROOM"
+  },
+  {
+    "model": "Boeing 737 Next Generation",
+    "code": "BOEING-737-800-31",
+    "airline_code": "GA",
+    "seat_layout": "3-3",
+    "seat_pitch": "31",
+    "seat_type": "ABOVE_AVERAGE_LEGROOM"
+  },
+  {
+    "model": "Bombardier CRJ1000",
+    "code": "BOMBARDIER-CRJ-1000-31",
+    "airline_code": "GA",
+    "seat_layout": "2-2",
+    "seat_pitch": "31",
+    "seat_type": "ABOVE_AVERAGE_LEGROOM"
+  },
+  {
+    "model": "Airbus A320",
+    "code": "AIRBUS-A320-32",
+    "airline_code": "ID",
+    "seat_layout": "3-3",
+    "seat_pitch": "32",
+    "seat_type": "ABOVE_AVERAGE_LEGROOM"
+  },
+  {
+    "model": "Boeing 737",
+    "code": "BOEING-737-32",
+    "airline_code": "ID",
+    "seat_layout": "3-3",
+    "seat_pitch": "32",
+    "seat_type": "ABOVE_AVERAGE_LEGROOM"
+  },
+  {
+    "model": "Boeing 737 Next Generation",
+    "code": "BOEING-737-800-32",
+    "airline_code": "ID",
+    "seat_layout": "3-3",
+    "seat_pitch": "32",
+    "seat_type": "ABOVE_AVERAGE_LEGROOM"
+  },
+  {
+    "model": "Boeing 737",
+    "code": "BOEING-737-30",
+    "airline_code": "IL",
+    "seat_layout": "3-3",
+    "seat_pitch": "30",
+    "seat_type": "STANDARD_LEGROOM"
+  },
+  {
+    "model": "ATR 72",
+    "code": "ATR-72-28",
+    "airline_code": "IW",
+    "seat_layout": "2-2",
+    "seat_pitch": "28",
+    "seat_type": "STANDARD_LEGROOM"
+  },
+  {
+    "model": "Boeing 737",
+    "code": "BOEING-737-29",
+    "airline_code": "JT",
+    "seat_layout": "3-3",
+    "seat_pitch": "29",
+    "seat_type": "STANDARD_LEGROOM"
+  },
+  {
+    "model": "Boeing 737",
+    "code": "BOEING-737-31",
+    "airline_code": "JT",
+    "seat_layout": "3-3",
+    "seat_pitch": "31",
+    "seat_type": "ABOVE_AVERAGE_LEGROOM"
+  },
+  {
+    "model": "Boeing 737 MAX",
+    "code": "BOEING-737-MAX-29",
+    "airline_code": "JT",
+    "seat_layout": "3-3",
+    "seat_pitch": "29",
+    "seat_type": "STANDARD_LEGROOM"
+  },
+  {
+    "model": "Boeing 737",
+    "code": "BOEING-737-29",
+    "airline_code": "NM",
+    "seat_layout": "3-3",
+    "seat_pitch": "29",
+    "seat_type": "STANDARD_LEGROOM"
+  },
+  {
+    "model": "ATR 72",
+    "code": "ATR-72-28",
+    "airline_code": "QG",
+    "seat_layout": "2-2",
+    "seat_pitch": "28",
+    "seat_type": "STANDARD_LEGROOM"
+  },
+  {
+    "model": "ATR 72",
+    "code": "ATR-72-31",
+    "airline_code": "QG",
+    "seat_layout": "2-2",
+    "seat_pitch": "31",
+    "seat_type": "ABOVE_AVERAGE_LEGROOM"
+  },
+  {
+    "model": "Airbus A320",
+    "code": "AIRBUS-A320-29",
+    "airline_code": "QG",
+    "seat_layout": "3-3",
+    "seat_pitch": "29",
+    "seat_type": "STANDARD_LEGROOM"
+  },
+  {
+    "model": "Airbus A320",
+    "code": "AIRBUS-A320-32",
+    "airline_code": "QG",
+    "seat_layout": "3-3",
+    "seat_pitch": "32",
+    "seat_type": "ABOVE_AVERAGE_LEGROOM"
+  },
+  {
+    "model": "Boeing 737",
+    "code": "BOEING-737-29",
+    "airline_code": "SJ",
+    "seat_layout": "3-3",
+    "seat_pitch": "29",
+    "seat_type": "STANDARD_LEGROOM"
+  }
+]
