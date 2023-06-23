@@ -18,7 +18,7 @@ router.get("/", (req, res) =>
 router.use('/auth', auth);
 router.use('/users', user);
 router.use('/flights', flight);
-router.use('', notification);
+router.use('/notifications', notification);
 router.use('/payments', payment);
 router.use('/tickets', ticket);
 router.use('/transactions', transaction);

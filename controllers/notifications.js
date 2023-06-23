@@ -3,7 +3,7 @@ const { Notifications, Users } = require('../db/models');
 module.exports = {
   index : async (req, res, next) => {
     try {
-      const { user_id } = req.params;
+      const { user_id } = req.query;
 
       const user = await Users.findOne({where: {id: user_id}});
       if (!user) {
@@ -15,6 +15,14 @@ module.exports = {
       }
   
       const notifications = await Notifications.findAll({ where: { user_id } });
+      if (notifications.length < 1) {
+        return res.status(404).json({
+          status: false,
+          message: 'Notifications is still empty.',
+          data: null
+        });
+      }
+
       return res.status(200).json({
         status: true,
         message: 'success',
@@ -49,8 +57,7 @@ module.exports = {
 
   store: async (req, res, next) => {
     try {
-      const { user_id } = req.params;
-      const { title, description, body } = req.body;
+      const { user_id, title, description, body } = req.body;
 
       if (!title || !description || !body) {
         return res.status(400).json({
@@ -60,7 +67,7 @@ module.exports = {
         });
       }
 
-      const notification = await Notifications.create({ user_id, title, description, body, is_read: false });
+      const notification = await Notifications.create({ user_id: user_id, title, description, body, is_read: false });
 
       return res.status(200).json({
         status: true,
