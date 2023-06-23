@@ -21,6 +21,9 @@ module.exports = {
       body: {
         type: Sequelize.STRING
       },
+      is_read: {
+        type: Sequelize.BOOLEAN
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

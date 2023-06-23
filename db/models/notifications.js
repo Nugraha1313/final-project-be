@@ -21,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     user_id: DataTypes.INTEGER,
     title: DataTypes.STRING,
     description: DataTypes.STRING,
-    body: DataTypes.STRING
+    body: DataTypes.STRING,
+    is_read: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Notifications',

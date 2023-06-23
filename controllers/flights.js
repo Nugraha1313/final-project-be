@@ -148,7 +148,6 @@ module.exports = {
     }
   },
 
-  // get flights by most visited city
   most_visited_city: async (req, res, next) => {
     try {
       const flights = await Transactions.findAll({
@@ -189,4 +188,70 @@ module.exports = {
       next(error)
     }
   },
+
+  query_data: async (req, res, next) => {
+    try {
+      let { length, start } = req.query;
+
+      if (!length) length = 10;
+      if (!start) start = 1;
+
+      let query = `
+        SELECT
+          flights.id,
+          flights.flight_number,
+          departure_airport.name as departure_airport,
+          departure_airport.iata_code as departure_code,
+          departure_airport.city as departure_city,
+          departure_airport.country as departure_country,
+          arrival_airport.name as arrival_airport,
+          arrival_airport.iata_code as arrival_code,
+          arrival_airport.city as arrival_city,
+          arrival_airport.country as arrival_country,
+          airplanes.model as airplane_model,
+          airplanes.code as airplane_code,
+          airlines.name as airline,
+          airlines.iata_code as airline_code,
+          flights.class,
+          flights.price,
+          flights.departure_terminal_name,
+          flights.arrival_terminal_name,
+          flights.flight_date,
+          flights.departure_time,
+          flights.arrival_time,
+          flights.departure_timestamp,
+          flights.arrival_timestamp,  
+          flights.flight_duration,
+          flights.free_baggage,
+          flights.cabin_baggage,
+          flights.capacity
+        FROM
+          flights
+          inner join airports as departure_airport on departure_airport.id = flights.departure_airport_id
+          inner join airports as arrival_airport on arrival_airport.id = flights.arrival_airport_id
+          inner join airplanes on airplanes.id = flights.airplane_id
+          inner join airlines on airlines.id = flights.airline_id
+        LIMIT ${length}
+        OFFSET ${start - 1}
+      `;
+
+      const results = await sequelize.query(query, {type: queryTypes.SELECT});
+
+      if (results.length < 1) {
+        return res.status(404).json({
+          status: false,
+          message: 'Flights data is still empty.',
+          data: null
+        })
+      }
+
+      return res.status(200).json({
+        status: true,
+        message: 'success',
+        data: results
+      })
+    } catch (error) {
+      throw (error.message)
+    }
+  }
 }

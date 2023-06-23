@@ -24,6 +24,12 @@ module.exports = {
       passport: {
         type: Sequelize.STRING
       },
+      issuing_country: {
+        type: Sequelize.STRING
+      },
+      expiration_date: {
+        type: Sequelize.STRING
+      },
       passenger_type_id: {
         type: Sequelize.INTEGER
       },
