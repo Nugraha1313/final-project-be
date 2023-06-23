@@ -1,5 +1,0 @@
-MIGRATE SPECIFIC FILE
-sequelize migrate:undo:all --to 20230609112553-create-flights.js
-
-RUN SPECIFIC SEEDER FILE
-sequelize db:seed --seed 20230609125329-Flights.js

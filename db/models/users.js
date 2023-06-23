@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Users extends Model {
     /**
@@ -13,28 +11,34 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Users.hasMany(models.Notifications, {
         foreignKey: "user_id",
-        as: "notifications"
-      })
+        as: "notifications",
+      });
 
       Users.hasMany(models.Transactions, {
-        foreignKey: 'user_id',
-        as: 'transaction'
-      })
+        foreignKey: "user_id",
+        as: "transaction",
+      });
     }
   }
-  Users.init({
-    name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    phone_number: DataTypes.STRING,
-    otp: DataTypes.STRING,
-    otp_expiration_time: DataTypes.DATE,
-    role: DataTypes.STRING,
-    user_type: DataTypes.STRING,
-    is_verified: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'Users',
-  });
+  Users.init(
+    {
+      name: DataTypes.STRING,
+      email: DataTypes.STRING,
+      password: DataTypes.STRING,
+      phone_number: DataTypes.STRING,
+      otp: DataTypes.STRING,
+      otp_expiration_time: DataTypes.DATE,
+      role: DataTypes.STRING,
+      user_type: DataTypes.STRING,
+      is_verified: DataTypes.BOOLEAN,
+    },
+    {
+      sequelize,
+      modelName: "Users",
+      tableName: "users",
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+    }
+  );
   return Users;
 };
