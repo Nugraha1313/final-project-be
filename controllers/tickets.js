@@ -25,7 +25,7 @@ module.exports = {
 
       const tickets = await sequelize.query(query, {type: queryTypes.SELECT});
 
-      if (!tickets) {
+      if (tickets.length < 1) {
         return res.status(404).json({
           status: false,
           message: `Tickets not found, please complete the payment!`,

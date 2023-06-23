@@ -1,4 +1,4 @@
-const { Transactions, Detail_transaction, Passengers, Flights, Payments } = require('../db/models');
+const { Transactions, Detail_transaction, Passengers, Flights, Payments, Users } = require('../db/models');
 const {sequelize, queryTypes} = require('../external/postgres');
 
 module.exports = {
@@ -62,9 +62,16 @@ module.exports = {
         })
       }
 
-      const flight = await Flights.findOne({where: {id: flight_id}});
-      const price = flight.price;
+      const user = await Users.findOne({where: {id: user_id}});
+      if (!user) {
+        return res.status(404).json({
+          status: false,
+          message: `User with id ${user_id} is not found.`,
+          data: null
+        })
+      }
 
+      const flight = await Flights.findOne({where: {id: flight_id}});
       if (!flight) {
         return res.status(404).json({
           status: false,
@@ -72,6 +79,8 @@ module.exports = {
           data: null
         })
       }
+
+      const price = flight.price;
 
       passengers.forEach((passenger) => {
         const {name, ktp, passport, issuing_country, date_of_birth, nationality, passenger_type} = passenger;
