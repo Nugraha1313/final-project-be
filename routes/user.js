@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const users = require("../controllers/users");
-const authMiddleware = require("../middleware/auth");
+const authMiddleware = require("../middlewares/auth");
 
 router.get("/:id", authMiddleware.auth, users.show);
 router.put("/:id", authMiddleware.auth,users.update);
