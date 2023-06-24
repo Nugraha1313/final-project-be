@@ -11,7 +11,7 @@ const user = require('./user')
 router.get("/", (req, res) =>
   res.status(200).json({
     status:true,
-    message: "Welcome to final project kelompok 5",
+    message: "Welcome to Tripp API",
   })
 );
 
