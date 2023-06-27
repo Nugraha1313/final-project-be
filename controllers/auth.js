@@ -663,7 +663,7 @@ module.exports = {
       } else {
         const payload = { id: user.id };
         const token = jwt.sign(payload, JWT_SECRET_KEY);
-        const link = `${FE_HOST}/auth/reset-password?token=${token}`;
+        const link = `${FE_HOST}/forgotpassword/${email}?token=${token}`;
         const html = await nodemailer.getHtml("reset-password.ejs", {
           name: user.name,
           link: link,
