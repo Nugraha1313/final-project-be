@@ -18,6 +18,9 @@ module.exports = {
       code: {
         type: Sequelize.STRING
       },
+      qr_image: {
+        type: Sequelize.STRING
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

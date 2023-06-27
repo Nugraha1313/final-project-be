@@ -184,7 +184,7 @@ module.exports = {
       });
       const now = new Date();
       //   set to 1 minutes
-      const otp_expiration_time = AddMinutesToDate(now, 1);
+      const otp_expiration_time = AddMinutesToDate(now, 10);
       // console.log("KODE OTP : ", otp);
       // console.log("EXPIRED : ", otp_expiration_time);
       //  hashing password
@@ -219,7 +219,7 @@ module.exports = {
       return res.status(201).json({
         status: true,
         message:
-          "OTP has been sent, expired in 1 minutes, please check your email!",
+          "OTP has been sent, expired in 10 minutes, please check your email!",
         data: null,
       });
     } catch (err) {
@@ -413,10 +413,10 @@ module.exports = {
       upperCase: false,
       specialChars: false,
     });
-    //   set to 1 minutes
-    const otp_expiration_time = AddMinutesToDate(now, 1);
-    console.log("KODE OTP : ", generatedOTP);
-    console.log("EXPIRED : ", otp_expiration_time);
+    //   set to 10 minutes
+    const otp_expiration_time = AddMinutesToDate(now, 10);
+    // console.log("KODE OTP : ", generatedOTP);
+    // console.log("EXPIRED : ", otp_expiration_time);
 
     const updatedUser = await Users.update(
       { otp: generatedOTP, otp_expiration_time: otp_expiration_time },
@@ -439,7 +439,7 @@ module.exports = {
     return res.status(201).json({
       status: true,
       message:
-        "OTP has been sent, expired in 1 minutes, please check your email!",
+        "OTP has been sent, expired in 10 minutes, please check your email!",
       data: null,
     });
   },
@@ -485,12 +485,12 @@ module.exports = {
       //   if account is already verified
       if (user.is_verified == true) {
         // check if OTP is expired or not
-        console.log("OTP EXP : ", user.otp_expiration_time);
-        console.log("CURRENT Date : ", currentDate);
-        console.log(
-          "HASIL PERBANDINGAN DGN NOW : ",
-          dates.compare(user.otp_expiration_time, currentDate)
-        );
+        // console.log("OTP EXP : ", user.otp_expiration_time);
+        // console.log("CURRENT Date : ", currentDate);
+        // console.log(
+        //   "HASIL PERBANDINGAN DGN NOW : ",
+        //   dates.compare(user.otp_expiration_time, currentDate)
+        // );
         if (dates.compare(user.otp_expiration_time, currentDate) == 1) {
           // check if OTP is same with the DB
           if (otp == user.otp) {
@@ -531,8 +531,8 @@ module.exports = {
         user.otp_expiration_time != null
       ) {
         // check if OTP is expired or not
-        console.log("OTP EXP : ", user.otp_expiration_time);
-        console.log("CURRENT Date : ", currentDate);
+        // console.log("OTP EXP : ", user.otp_expiration_time);
+        // console.log("CURRENT Date : ", currentDate);
         if (dates.compare(user.otp_expiration_time, currentDate) == 1) {
           // check if OTP is same with the DB
           if (otp == user.otp) {
@@ -663,7 +663,7 @@ module.exports = {
       } else {
         const payload = { id: user.id };
         const token = jwt.sign(payload, JWT_SECRET_KEY);
-        const link = `${FE_HOST}/reset-password?token=${token}`;
+        const link = `${FE_HOST}/forgotpassword/${email}?token=${token}`;
         const html = await nodemailer.getHtml("reset-password.ejs", {
           name: user.name,
           link: link,

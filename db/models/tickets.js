@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
   Tickets.init({
     detail_transaction_id: DataTypes.INTEGER,
     is_active: DataTypes.BOOLEAN,
-    code: DataTypes.STRING
+    code: DataTypes.STRING,
+    qr_image: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Tickets',

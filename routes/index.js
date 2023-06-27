@@ -5,13 +5,13 @@ const flight = require('./flight')
 const notification = require('./notification');
 const payment = require('./payment');
 const ticket = require('./ticket');
-const transaction = require('./transaction')
-const user = require('./user')
+const transaction = require('./transaction');
+const user = require('./user');
 
 router.get("/", (req, res) =>
   res.status(200).json({
     status:true,
-    message: "Welcome to final project kelompok 5",
+    message: "Welcome to Tripp API",
   })
 );
 
