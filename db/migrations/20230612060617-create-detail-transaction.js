@@ -10,10 +10,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       transaction_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       passenger_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       created_at: {
         allowNull: false,
