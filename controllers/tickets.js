@@ -17,7 +17,7 @@ module.exports = {
       }
 
       let query = `
-      SELECT transaction_id, passenger_id, name, is_active, code AS ticket_code FROM detail_transaction
+      SELECT transaction_id, passenger_id, name, is_active, code AS ticket_code, qr_image FROM detail_transaction
         JOIN tickets ON detail_transaction.id = tickets.detail_transaction_id
         JOIN passengers ON detail_transaction.passenger_id = passengers.id
       WHERE transaction_id = '${transaction_id}'
