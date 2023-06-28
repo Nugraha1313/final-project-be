@@ -67,6 +67,16 @@ module.exports = {
         });
       }
 
+      const user = await Users.findOne({where: {id: user_id}});
+
+      if (!user) {
+        return res.status(404).json({
+          status: false,
+          message: `User with id ${user_id} is not found.`,
+          data: null
+        });
+      }
+
       const notification = await Notifications.create({ user_id: user_id, title, description, body, is_read: false });
 
       return res.status(200).json({

@@ -8,7 +8,7 @@ module.exports = {
 
       const detail_transaction = await Detail_transaction.findAll({where: {transaction_id}});
       
-      if (!detail_transaction) {
+      if (detail_transaction.length < 1) {
         return res.status(404).json({
           status: false,
           message: `transaction data with transaction id ${transaction_id} is not found`,
@@ -17,10 +17,10 @@ module.exports = {
       }
 
       let query = `
-      SELECT transaction_id, passenger_id, name, is_active, code AS ticket_code FROM detail_transaction
+      SELECT transaction_id, passenger_id, name, is_active, code AS ticket_code, qr_image FROM detail_transaction
         JOIN tickets ON detail_transaction.id = tickets.detail_transaction_id
         JOIN passengers ON detail_transaction.passenger_id = passengers.id
-      WHERE transaction_id = ${transaction_id}
+      WHERE transaction_id = '${transaction_id}'
       `;
 
       const tickets = await sequelize.query(query, {type: queryTypes.SELECT});

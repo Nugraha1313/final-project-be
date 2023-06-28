@@ -1,5 +1,6 @@
 const { Transactions, Detail_transaction, Passengers, Flights, Payments, Users } = require('../db/models');
 const {sequelize, queryTypes} = require('../external/postgres');
+const randomstring = require("randomstring");;
 
 module.exports = {
   show: async (req, res, next) => {
@@ -27,7 +28,7 @@ module.exports = {
         return res.status(404).json({
           status: false,
           message: `Transactions not found.`,
-          data: transactions
+          data: null
         })
       }
 
@@ -38,6 +39,44 @@ module.exports = {
       })
     } catch (error) {
       next(error)
+    }
+  },
+
+  getById: async (req, res, next) => {
+    try {
+      const { transaction_id } = req.body;
+
+      let query = `
+      SELECT 
+        user_id as purchaser_id, transaction_id, transactions.created_at as transaction_date, flight_number, class, price, departure_terminal_name, arrival_terminal_name, flight_date, departure_time, arrival_time, flight_duration, free_baggage, cabin_baggage, amount as total_bill, is_complete as payment_status, departure_airport.name as departure_airport, departure_airport.iata_code as departure_code, departure_airport.city as departure_city, departure_airport.country as departure_country, arrival_airport.name as arrival_airport, arrival_airport.iata_code as arrival_code, arrival_airport.city as arrival_city, arrival_airport.country as arrival_country, airplanes.model as airplane_model, airplanes.code as airplane_code, airlines.name as airline, airlines.iata_code as airline_code
+      FROM transactions
+        JOIN flights ON transactions.flight_id = flights.id
+        JOIN users ON transactions.user_id = users.id
+        JOIN payments ON transactions.id = payments.transaction_id
+        JOIN airports as departure_airport ON departure_airport.id = flights.departure_airport_id
+        JOIN airports as arrival_airport ON arrival_airport.id = flights.arrival_airport_id
+        JOIN airplanes ON airplanes.id = flights.airplane_id
+        JOIN airlines ON airlines.id = flights.airline_id
+      WHERE transactions.id = '${ transaction_id }'
+      `;
+
+      const transaction = await sequelize.query(query, {type: queryTypes.SELECT});
+
+      if ( !transaction[0] ) {
+        return res.status(404).json({
+          status: false,
+          message: 'Transactions not found.',
+          data: null
+        });
+      }
+
+      return res.status(200).json({
+        status: true,
+        message: 'success',
+        data: transaction[0]
+      })
+    } catch (error) {
+      next (error)
     }
   },
 
@@ -102,7 +141,10 @@ module.exports = {
         }
       })
 
-      const transaction = await Transactions.create({user_id, flight_id})
+      const transaction = await Transactions.create({
+        id: randomstring.generate(12),
+        user_id,
+        flight_id})
       let amount = 0;
 
       passengers.forEach( async (passenger) => {
@@ -126,6 +168,7 @@ module.exports = {
         }
 
         const data = await Passengers.create({
+          id: randomstring.generate(12),
           name: passenger.name,
           date_of_birth: passenger.date_of_birth,
           nationality: passenger.nationality,
@@ -141,7 +184,7 @@ module.exports = {
       
       const payment = await Payments.create({transaction_id: transaction.id, amount, is_complete: false})
       
-      return res.status(400).json({
+      return res.status(200).json({
         status: true,
         message: 'success',
         data: {
