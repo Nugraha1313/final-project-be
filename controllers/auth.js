@@ -9,6 +9,7 @@ const v = new fastestValidator();
 // const phones = require("phone");
 // const detectPhonenumber = require("detect-phonenumber");
 let otpGenerator = require("otp-generator");
+const axios = require("axios");
 const { Users } = require("../db/models");
 const { JWT_SECRET_KEY, API_HOST, FE_HOST } = process.env;
 // Function to Compares dates (expiration time and current time in our case)
@@ -303,52 +304,117 @@ module.exports = {
       throw err;
     }
   },
-    loginGoogle: async (req, res) => {
-      try {
-        const { code } = req.query;
-        if (!code) {
-          const googleLoginUrl = oauth2.generateAuthUrl();
-          return res.redirect(googleLoginUrl);
-        }
+  loginGoogle: async (req, res) => {
+    try {
+      const { access_token } = req.body;
 
-        await oauth2.setCreadentials(code);
-        const { data } = await oauth2.getUserData();
-
-        let user = await Users.findOne({
-          where: { email: data.email },
-        });
-        if (!user) {
-          user = await Users.create({
-            name: data.name,
-            email: data.email,
-            is_verified: true,
-            user_type: 'google',
-          });
-        } else {
-          await Users.update(
-            { is_verified: true, user_type:'google' },
-            { where: { email: data.email } }
-          );
-        }
-
-        const payload = {
-          id: user.id,
-          role: user.role,
-        };
-
-        const token = await jwt.sign(payload, JWT_SECRET_KEY);
-
-        return res.status(200).json({
-          status: true,
-          message: "login success!",
-          data: {
-            token: token,
-          },
-        });
-      } catch (err) {
-        throw err;
+      if (!access_token) {
+        return res.status(400).json({ message: "Access Token is required" });
       }
-    },
+
+      const response = await axios.get(
+        `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
+      );
+      const { name, email } = response.data;
+      let user = await Users.findOne({ where: { email: email } });
+
+      // if email is not registered
+      if (!user) {
+        await Users.create({
+          name: name,
+          email: email,
+          is_verified: true,
+          user_type: "google",
+        });
+      }
+
+      // if email is already register, but not verified
+      if (user && user.is_verified == false) {
+        await Users.update(
+          { is_verified: true, user_type: "google" },
+          { where: { email: email } }
+        );
+      } else if (user && user.is_verified == true) {
+        // when email is already register, and verified
+        await Users.update(
+          { user_type: "google" },
+          { where: { email: email } }
+        );
+      }
+
+      // const { code } = req.query;
+      // if (!code) {
+      //   const googleLoginUrl = oauth2.generateAuthUrl();
+      //   return res.redirect(googleLoginUrl);
+      // }
+
+      // await oauth2.setCreadentials(code);
+      // const { data } = await oauth2.getUserData();
+
+      // let user = await Users.findOne({
+      //   where: { email: data.email },
+      // });
+      // if (!user) {
+      //   user = await Users.create({
+      //     name: data.name,
+      //     email: data.email,
+      //     is_verified: true,
+      //     user_type: 'google',
+      //   });
+      // } else {
+      //   await Users.update(
+      //     { is_verified: true, user_type:'google' },
+      //     { where: { email: data.email } }
+      //   );
+      // }
+
+      const payload = {
+        id: user.id,
+        role: user.role,
+      };
+
+      const token = await jwt.sign(payload, JWT_SECRET_KEY, {
+        expiresIn: "1d",
+      });
+
+      return res.status(200).json({
+        status: true,
+        message: "Login success!",
+        data: {
+          token: token,
+        },
+      });
+    } catch (error) {
+      let status = 500;
+      if (axios.isAxiosError(error)) {
+        error.message = error.response.data.error_description;
+        status = error.response.status;
+      }
+
+      res.status(status).json({ message: error.message });
+    }
+  },
+    //get credential token
+  loginGoogleGetData: async (req, res, next) => {
+    try {
+      const code = req.query.code;
+      if (!code) {
+        const url = oauth2.generateAuthUrl();
+        return res.redirect(url);
+      }
+
+      const token = await oauth2.setCredentials(code);
+
+      const { data } = await oauth2.getUserData();
+
+      return res.status(200).json({
+        data,
+        token,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
   resendOTP: async (req, res) => {
     const { email } = req.body;
 
@@ -408,11 +474,11 @@ module.exports = {
     }
     //   OTP
     //Generate OTP
-      const otp = otpGenerator.generate(6, {
-        lowerCaseAlphabets: false,
-        upperCaseAlphabets: false,
-        specialChars: false,
-      });
+    const otp = otpGenerator.generate(6, {
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
     //   set to 10 minutes
     const otp_expiration_time = AddMinutesToDate(now, 10);
     // console.log("KODE OTP : ", generatedOTP);

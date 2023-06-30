@@ -20,6 +20,7 @@
   "homepage": "https://github.com/Nugraha1313/final-project-be#readme",
   "dependencies": {
     "@sentry/node": "^7.53.0",
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
