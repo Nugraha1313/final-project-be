@@ -46,6 +46,14 @@ module.exports = {
     try {
       const { transaction_id } = req.query;
 
+      if(!transaction_id) {
+        return res.status(400).json({
+          status: false,
+          message: 'Transaction_id is required.',
+          data: null
+        });
+      }
+
       let query = `
       SELECT 
         user_id as purchaser_id, transaction_id, transactions.created_at as transaction_date, flight_number, class, price, departure_terminal_name, arrival_terminal_name, flight_date, departure_time, arrival_time, flight_duration, free_baggage, cabin_baggage, amount as total_bill, is_complete as payment_status, departure_airport.name as departure_airport, departure_airport.iata_code as departure_code, departure_airport.city as departure_city, departure_airport.country as departure_country, arrival_airport.name as arrival_airport, arrival_airport.iata_code as arrival_code, arrival_airport.city as arrival_city, arrival_airport.country as arrival_country, airplanes.model as airplane_model, airplanes.code as airplane_code, airlines.name as airline, airlines.iata_code as airline_code
@@ -56,9 +64,10 @@ module.exports = {
         JOIN airports as departure_airport ON departure_airport.id = flights.departure_airport_id
         JOIN airports as arrival_airport ON arrival_airport.id = flights.arrival_airport_id
         JOIN airplanes ON airplanes.id = flights.airplane_id
-        JOIN airlines ON airlines.id = flights.airline_id`;
+        JOIN airlines ON airlines.id = flights.airline_id
+        WHERE transactions.id = '${ transaction_id }'
+      `;
 
-      if (transaction_id) query += ` WHERE transactions.id = '${ transaction_id }'`
 
       const transaction = await sequelize.query(query, {type: queryTypes.SELECT});
 
