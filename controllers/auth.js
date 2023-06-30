@@ -178,8 +178,8 @@ module.exports = {
       //   OTP
       //Generate OTP
       const otp = otpGenerator.generate(6, {
-        alphabets: false,
-        upperCase: false,
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
         specialChars: false,
       });
       const now = new Date();
@@ -408,11 +408,11 @@ module.exports = {
     }
     //   OTP
     //Generate OTP
-    const generatedOTP = otpGenerator.generate(6, {
-      alphabets: false,
-      upperCase: false,
-      specialChars: false,
-    });
+      const otp = otpGenerator.generate(6, {
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+        specialChars: false,
+      });
     //   set to 10 minutes
     const otp_expiration_time = AddMinutesToDate(now, 10);
     // console.log("KODE OTP : ", generatedOTP);
