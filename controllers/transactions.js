@@ -44,7 +44,7 @@ module.exports = {
 
   getById: async (req, res, next) => {
     try {
-      const { transaction_id } = req.body;
+      const { transaction_id } = req.query;
 
       let query = `
       SELECT 
@@ -56,9 +56,9 @@ module.exports = {
         JOIN airports as departure_airport ON departure_airport.id = flights.departure_airport_id
         JOIN airports as arrival_airport ON arrival_airport.id = flights.arrival_airport_id
         JOIN airplanes ON airplanes.id = flights.airplane_id
-        JOIN airlines ON airlines.id = flights.airline_id
-      WHERE transactions.id = '${ transaction_id }'
-      `;
+        JOIN airlines ON airlines.id = flights.airline_id`;
+
+      if (transaction_id) query += ` WHERE transactions.id = '${ transaction_id }'`
 
       const transaction = await sequelize.query(query, {type: queryTypes.SELECT});
 
