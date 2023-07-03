@@ -1,796 +1,2168 @@
-openapi: 3.0.1
+openapi: 3.0.0
 info:
-  title: Sky Ticket API
+  title: TRIPP
+  description: |-
+    Tripp adalah sebuah layanan yang digunakan untuk melakukan pemesanan tiket pesawat secara online. Dengan Tripp pengguna dapat memilih penerbangan berdasarkan jadwal dan maskapai, serta melakukan pembayaran secara online. 
+  contact: 
+    email: 202410102062@mail.unej.ac.id
   version: 1.0.0
 servers:
-- url: /http:localhost:3000
+  - url: http://localhost:8000
+    description: Test local computer
+  - url: https://final-project-be-develop.up.railway.app/
+    description: Staging
+  - url: not yet available
+    description: Production
+tags:
+  - name: Users
+    description: Mengolah data user dan proses autentikasi
+  - name: Flights
+    description: Informasi mengenai jadwal penerbangan
+  - name: Transactions
+    description: Melayani booking tiket pesawat
+  - name: Payments
+    description: Menangani proses pembayaran
+  - name: Tickets
+    description: Menyediakan informasi tiket
+  - name: Notifications
+    description: Mendapatkan Informasi penerbangan
 paths:
-  /users:
-    get:
-      summary: Get all users
-      responses:
-        200:
-          description: Success
-          content: {}
+  /auth/register:
     post:
-      summary: Create a new user
+      tags:
+        - Users
+      summary: Mendaftarkan user baru
+      description: |-
+        Registrasi user diperlukan agar user dapat melakukan log in. Inputan pada tiap field harus sesuai ketentuan, diantaranya adalah:
+        
+        - Password minimal mengandung 6 karakter dengan menyertakan minimal 1 huruf kecil [a-z], minimal 1 huruf besar [A-Z] , dan minimal 1 karakter angka [0-9]
+        - Email yang telah teregister tidak dapat digunakan kembali
+        - Phone_number memiliki tipe data string
+      operationId: post-register-user
       requestBody:
         content:
-          '*/*':
+          application/json:
             schema:
-              $ref: '#/components/schemas/User'
-        required: true
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: sabrina
+                email:
+                  type: string
+                  example: sabrina@mail.com
+                phone_number:
+                  type: string
+                  example: 085232128434
+                password:
+                  type: string
+                  example: fA077f
+                confirmPassword:
+                  type: string
+                  example: fA077f
       responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: user
-  /users/{user_id}:
+        "201":
+          description: User Registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: OTP has been sent, expired in 10 minutes, please check your email!
+                  data:
+                    example: null
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Name is required!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Email is already used!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Phone Number is not valid
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Email is not valid
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Password minimum 6 characters, must contain uppercase, lowercase, and number!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: password and confirm password doesn't match!!!
+                      data: 
+                        example: null
+              examples:
+                duplicated-email:
+                  summary: Jika email sudah digunakan
+                  value:
+                    status: false
+                    message: Email is already used!
+                    data: null
+                required-data-is-not-provided:
+                  summary: Jika data yang dibutuhkan tidak tersedia
+                  value:
+                    status: false
+                    message: Name is required!
+                    data: null
+                phone-number-is-not-valid:
+                  summary: Jika phone_number tidak valid
+                  value:
+                    status: false
+                    message: Phone Number is not valid
+                    data: null
+                email-is-not-valid:
+                  summary: Jika email tidak valid
+                  value:
+                    status: false
+                    message: Email is not valid
+                    data: null
+                password-is-not-valid:
+                  summary: Jika password tidak valid
+                  value:
+                    status: false
+                    message: Password minimum 6 characters, must contain uppercase, lowercase, and number!
+                    data: null
+                password-confirmPassword-doesn't-match:
+                  summary: Jika password dan conformPassword tidak cocok
+                  value:
+                    status: false
+                    message: password and confirm password doesn't match
+                    data: null
+                    
+  /auth/login:
+    post:
+      tags:
+        - Users
+      summary: Mendapatkan token autentikasi
+      description: Token autentikasi diperlukan untuk mengakses beberapa endpoint yang dilindungi seperti transactions dan payment.
+      operationId: post-login-user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: sabrina@mail.com
+                password:
+                  type: string
+                  example: fA077f
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Login success!
+                  data: 
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE2ODcxNjg3MDR9.H4k4sMd2XH8AiWMRxdgelXMBb0DlC5nQiTEWAxyUzIU
+        "401":
+          description: Email belum terverifikasi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Account is not activated, please check your email, and verify the otp!
+                  data: 
+                    example: null
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Field email is required!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Email is not valid!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Email is not registered!, please register first!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Password is incorrect
+                      data: 
+                        example: null
+              examples:
+                required-data-is-not-provided:
+                  summary: Jika data yang dibutuhkan tidak tersedia
+                  value:
+                    status: false
+                    message: Field email is required!
+                    data: null
+                email-is-not-valid:
+                  summary: Jika email tidak valid
+                  value:
+                    status: false
+                    message: Email is not falid!
+                    data: null
+                password-is-incorrect:
+                  summary: Jika password tidak valid
+                  value:
+                    status: false
+                    message: Password is incorrect
+                    data: null
+                email-is-not-registered:
+                  summary: Jika email tidak terdaftar
+                  value:
+                    status: false
+                    message: Email is not registered!, please register first!
+                    data: null
+  /auth/verify-otp:
+    post:
+      tags:
+        - Users
+      summary: Mendapatkan kode verify-otp
+      description: token menandakan user sudah login
+      operationId: post-verify-otp-user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: fitriandriyani07012002@gmail.com
+                otp:
+                  type: string
+                  example: prxuEx
+      responses:
+        "200":
+          description: User Verified
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Success Verified The OTP!
+                  data:
+                    example: null
+        
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Email is required!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: OTP is required!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Email is not registered!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: You're Not Request OTP Yet!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: OTP is expired!
+                      data:
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: OTP is Not Valid!
+                      data:
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Activation account failed!
+                      data:
+                        example: null
+              examples:
+                required-data-is-not-provided:
+                  summary: Jika Email tidak ada
+                  value:
+                    status: false
+                    message: Email is required!
+                    data: null
+                otp-is-required:
+                  summary: Jika OTP diperlukan
+                  value:
+                    status: false
+                    message: OTP is required!
+                    data: null
+                email-is-not-registered:
+                  summary: Jika email tidak terdaftar
+                  value:
+                    status: false
+                    message: Email is not registered!
+                    data: null
+                otp-is-request:
+                  summary: Jika meminta kode OTP
+                  value:
+                    status: false
+                    message: You're Not Request OTP Yet!
+                    data: null
+                user-otp-expiration-time:
+                  summary: Jika OTP sudah kadaluwarsa
+                  value:
+                    status: false
+                    message: OTP is expired!
+                    data: null
+                otp-failed-verified:
+                  summary: Jika OTP tidak valid
+                  value:
+                    status: false
+                    message: OTP is Not Valid!
+                    data: null
+                if the account fails to be verified:
+                  summary: jika akun gagal diverifikasi
+                  value:
+                    status: false
+                    message: Activation account failed!
+                    data: null
+  /auth/resend-otp:
+    post:
+      tags:
+        - Users
+      summary: Kirim Ulang OTP
+      description: validasi jika pengguna sudah meminta kirim ulang otp untuk membatasi permintaan
+      operationId: post-resend otp-user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: fitriandriyani07012002@gmail.com
+      responses:
+        "201":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: OTP has been sent, expired in 10 minutes, please check your email!
+                  data: 
+                    type: string
+                    example: null
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Failed Send the OTP!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: You have already requested resend otp, check your email please
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Email is not registered!
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Email is not valid
+                      data: 
+                        example: null
+              examples:
+                failed-send-otp:
+                  summary: Jika pengguna mencoba memverifikasi otp tetapi tidak mengirim permintaan
+                  value:
+                    status: false
+                    message: Failed Send the OTP!
+                    data: null
+                resend-otp:
+                  summary: Meminta kirim ulang OTP
+                  value:
+                    status: false
+                    message: You have already requested resend otp, check your email please
+                    data: null
+                email-not-registed:
+                  summary: Jika email tidak terdaftar
+                  value:
+                    status: false
+                    message: Email is not registered!
+                    data: null
+                email-not-valid:
+                  summary: Jika email tidak divalidasi
+                  value:
+                    status: false
+                    message: Email is not valid!
+                    data: null
+  /auth/forgot-password:
+    post:
+      tags:
+        - Users
+      summary: Mengirim tautan reset password ke email pengguna
+      description:  Data permintaan reset password
+      operationId: post-forgot passsword-user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: fitriandriyani07012002@gmail.com
+      responses:
+        "200":
+          description: mengirim tautan reset password ke email pengguna
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Success send link reset password to your email!
+                  data: 
+                    type: string
+                    example: null
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: email not found!
+                      data: 
+                        example: null
+              examples:
+                email-not-found:
+                  summary: Jika pengguna mencoba memverifikasi email
+                  value:
+                    status: false
+                    message: email not found!
+                    data: null
+  /users/{id}:
     get:
-      summary: Get user by ID
+      tags:
+        - Users
+      summary: Mendapatkan detail pengguna
+      description: Detail user
       parameters:
-      - name: user_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of user
       responses:
-        200:
-          description: Success
-          content: {}
+        "200":
+          description: Success Mendapatkan data user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data: 
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 
+                      name:
+                        type: string
+                        example: fitri andriyani
+                      email:
+                        type: string
+                        example: fitriandriyani07012002@gmail.com
+                      password:
+                        type: string
+                        example: $2b$10$NcB2dn7Dn1fXURWbTQd.0eFGB8Uu6Ca5W5/qmolvxuxVJgaNPg4Ra
+                      phone_number:
+                        type: string
+                        example: 085232128432
+                      otp:
+                        type: string
+                        example: sipUzs
+                      otp_experation_time:
+                        type: string
+                        example: 2023-06-20T11:53:20.615Z
+                      role:
+                        type: string
+                        example: user
+                      user_type:
+                        type: string
+                        example: basic
+                      is_verified:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        example: 2023-06-20T11:44:39.696Z
+                      updated_at:
+                        type: string
+                        example: 2023-06-20T11:52:20.615Z
+      security:
+        - jwt_token: []
     put:
-      summary: Update user by ID
+      tags:
+        - Users
+      summary: Mengupdate data pengguna
+      description: Mengupdate data pengguna
       parameters:
-      - name: user_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: id of user
       requestBody:
         content:
-          '*/*':
+          application/json:
             schema:
-              $ref: '#/components/schemas/User'
-        required: true
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Fitri Andriyani
       responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: user
-    delete:
-      summary: Delete user by ID
+        "200":
+          description: Success Update Data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data: 
+                    type: integer
+                    example: 1
+      security:
+        - jwt_token: []
+  /flights:
+    post:
+      tags:
+        - Flights
+      summary: Digunakan untuk mencari jadwal penerbangan 
+      description: Digunakan untuk mencari jadwal penerbangan 
+      operationId: post-flight-flights
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                origin_airport:
+                  type: string
+                  example: MLG
+                destination_airport:
+                  type: string
+                  example: HLP
+                flight_date: 
+                  type: string
+                  example: 2023-06-01
+                passenger_cnt: 
+                  type: number
+                  example: 2
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Ok
+                  err: 
+                    type: string
+                    example: null
+                  data: 
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 216
+                      flight_number:
+                        type: string
+                        example: ID-7580
+                      departure_airport:
+                        type: integer
+                        example: Abdul Rachman Saleh
+                      departure_code:
+                        type: string
+                        example: MLG
+                      departure_city:
+                        type: string
+                        example: Malang
+                      departure_country:
+                        type: string
+                        example: Indonesia
+                      arrivall_airport:
+                        type: string
+                        example: Halim Perdanakusuma International Airport
+                      arrivall_code:
+                        type: string
+                        example: HLP
+                      arrivall_city:
+                        type: string
+                        example: Jakarta
+                      arrivall_country:
+                        type: string
+                        example: Indonesia
+                      airplane_model:
+                        type: string
+                        example: Airbus A320
+                      airplane_code:
+                        type: string
+                        example: AIRBUS-A320-32
+                      airline:
+                        type: string
+                        example: Batik Air
+                      airline_code:
+                        type: string
+                        example: ID
+                      class:
+                        type: string
+                        example: ECONOMY
+                      price:
+                        type: integer
+                        example: 1007200
+                      departure_terminal_name:
+                        type: string
+                        example: null
+                      arrival_terminal_name:
+                        type: string
+                        example: null
+                      flight_date:
+                        type: string
+                        example: 2023-06-01
+                      departure_time:
+                        type: string
+                        example: 09:15
+                      arrival_time:
+                        type: string
+                        example: 10:40
+                      departure_timestamp:
+                        type: integer
+                        example: 1685585700
+                      arrival_timestamp:
+                        type: integer
+                        example: 1685590800
+                      flight_duration:
+                        type: integer
+                        example: 85
+                      free_baggage:
+                        type: integer
+                        example: 20
+                      cabin_baggage:
+                        type: integer
+                        example: 7
+                      capacity:
+                        type: integer
+                        example: 192
+                      purchased_ticket:
+                        type: string
+                        example: null
+                      available_ticket:
+                        type: integer
+                        example: 192
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Bad Request
+                  data: 
+                    example: null
+  /flights/{id}:
+    get:
+      tags:
+        - Flights
+      summary: Menampilkan detail data penerbangan
+      description: Menampilkan detail data dari suatu penerbangan
       parameters:
-      - name: user_id
-        in: path
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: id of flight
+      responses:
+        "200":
+          description: Success Mendapatkan data Penerbangan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data: 
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 5
+                      flight_number:
+                        type: string
+                        example: ID-6540
+                      class:
+                        type: string
+                        example: ECONOMY
+                      price:
+                        type: integer
+                        example: 2443100
+                      departure_terminal_name:
+                        type: string
+                        example: Terminal 2D
+                      arrival_terminal_name:
+                        type: string
+                        example: Terminal Domestic
+                      flight_date:
+                        type: string
+                        example: 2023-06-01
+                      departure_time:
+                        type: string
+                        example: 02:00
+                      arrival_time:
+                        type: string
+                        example: 06:10
+                      flight_duration:
+                        type: integer
+                        example: 250
+                      free_baggage:
+                        type: integer
+                        example: 20
+                      cabin_baggage:
+                        type: integer
+                        example: 7
+                      capacity:
+                        type: integer
+                        example: 192
+                  departure: 
+                    type: object
+                    properties:      
+                      name:
+                        type: string
+                        example: Soekarno Hatta International Airport
+                      iata_code:
+                        type: string
+                        example: CGK
+                      city:
+                        type: string
+                        example: Jakarta
+                      country: 
+                        type: string
+                        example: Indonesia
+                  arrival: 
+                    type: object
+                    properties:      
+                      name:
+                        type: string
+                        example: El Tari
+                      iata_code:
+                        type: string
+                        example: KOE
+                      city:
+                        type: string
+                        example: Kupang
+                      country: 
+                        type: string
+                        example: Indonesia
+                  airline: 
+                    type: object
+                    properties:      
+                      name:
+                        type: string
+                        example: Batik Air
+                      short_name:
+                        type: string
+                        example: Batik
+                      iata_code:
+                        type: string
+                        example: ID
+                      icon_url:
+                        type: string
+                        example: https://ik.imagekit.io/tvlk/image/imageResource/2019/12/13/1576208649600-12471f9b7ffa159361f7bbbfb63065ee.png?tr=q-75
+                  airplane: 
+                    type: object
+                    properties:      
+                      model:
+                        type: string
+                        example: Airbus A320
+                      code:
+                        type: string
+                        example: AIRBUS-A320-32
+                      airline_code:
+                        type: string
+                        example: ID
+                      seat_type: 
+                        type: string
+                        example: ABOVE_AVERAGE_LEGROOM
+        "404":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: The flight you are looking for is not available
+                  data: 
+                    example: null
+            
+  /flights/favorite-city:
+    get:
+      tags:
+        - Flights
+      summary: Menampilkan data penerbangan favorit
+      description: Mendapatkan data penerbangan dari kota yang paling suka dikunjungi
+      responses:
+        "200":
+          description: Success Mendapatkan data Penerbangan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data: 
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        total_transaction:
+                          type: integer
+                          example: 5
+                        flight:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 2
+                            arrival:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 46
+                                city:
+                                  type: string
+                                  example: Manado
+                                country:
+                                  type: string
+                                  example: Indonesia
+        "404":
+          description: Data is empty
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Transaction data is still empty
+                  data:
+                    example: null
+  /flights/data:
+   get:
+      tags:
+        - Flights
+      summary: Mendapatkan sejumlah data informasi penerbangan
+      description:  Mengembalikan sejumlah data penerbangan sesuai dengan query yang diberikan
+      parameters:
+        - in: query
+          name: start
+          schema:
+            type: integer
+          description: The number of items to starting to collect the result set
+        - in: query
+          name: length
+          schema:
+            type: integer
+          description: The numbers of items to return
+      responses:
+        "200":
+          description: Sukses mendapatkan informasi penerbangan
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    status:
+                      type: boolean
+                    message:
+                      type: string
+                      example: success
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 10
+                          flight_number:
+                            type: string
+                            example: QG-300
+                          departure_airport:
+                            type: string
+                            example: Soekarno Hatta International Airport
+                          departure_code:
+                            type: string
+                            example: CGK
+                          departure_city:
+                            type: string
+                            example: Jakart
+                          departure_country:
+                            type: string
+                            example: 10
+                          arrival_airport:
+                            type: string
+                            example: Sam Ratulangi
+                          arrival_code:
+                            type: string
+                            example: MDC
+                          arrival_city:
+                            type: string
+                            example: Manado
+                          arrival_country:
+                            type: string
+                            example: Indonesia
+                          airplane_model:
+                            type: string
+                            example: Airbus A320
+                          airplane_code:
+                            type: string
+                            example: AIRBUS-A320-32
+                          airline:
+                            type: string
+                            example: Citilink
+                          airline_code:
+                            type: string
+                            example: QG
+                          class:
+                            type: string
+                            example: ECONOMY
+                          price:
+                            type: number
+                            format: double
+                            example: 2740035
+                          departure_terminal_name:
+                            type: string
+                            example: Terminal 3
+                          arrival_terminal_name:
+                            type: string
+                            example: Terminal Dosmestic
+                          flight_date:
+                            type: string
+                            format: date
+                            example: 2023-06-01
+                          departure_time:
+                            type: string
+                            example: 02:30
+                          arrival_time:
+                            type: string
+                            example: 06:55
+                          departure_timestamp:
+                            type: integer
+                            example:  1685561400
+                          arrival_timestamp:
+                            type: integer
+                            example: 1685577300
+                          flight_duration:
+                            type: integer
+                            example: 265
+                          free_baggage:
+                            type: integer
+                            example: 20
+                          cabin_baggage:
+                            type: integer
+                            example: 7
+                          capacity:
+                            type: integer
+                            example: 192
+                    
+        "404":
+          description: Error Data Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Flights data is still empty
+                  data: 
+                    example: null
+  /transactions:
+    post:
+      tags:
+        - Transactions
+      summary: Membuat pemesanan
+      description:  Pemesanan tiket penerbangan
+      operationId: post-transactions-transactions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 1
+                flight_id: 
+                  type: integer
+                  example: 3
+                passengers: 
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: Jeno
+                      date_of_birth:
+                        type: string
+                        format: date
+                        example: 07 Januari 2002
+                      nationality:
+                        type: string
+                        example: Indonesia
+                      ktp: 
+                        type: integer
+                        example: 202410102062
+                      passport:
+                        type: string
+                        example: null
+                      issuing_country:
+                        type: string
+                        example: null
+                      expiration_date:
+                        type: string
+                        example: null
+                      passenger_type:
+                        type: string
+                        example: bayi
+                    
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Succes
+                  data:
+                    type: object
+                    properties:
+                      transactions:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          user_id: 
+                            type: integer
+                            example: 1
+                          flight_id:
+                            type: integer
+                            example: 3
+                          updated_at:
+                            type: string
+                            format: date-time
+                            example: 2023-06-20T11:28:29.167Z
+                          created_at:
+                            type: string
+                            format: date-time
+                            example: 2023-06-20T11:28:29.167Z
+                          passengers: 
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  example: Jeno
+                                date_of_birth:
+                                  type: string
+                                  format: date
+                                  example: 07 Januari 2002
+                                nationality:
+                                  type: string
+                                  example: Indonesia
+                                ktp: 
+                                  type: integer
+                                  example: 202410102062
+                                passport:
+                                  type: string
+                                  example: null
+                                issuing_country:
+                                  type: string
+                                  example: null
+                                expiration_date:
+                                  type: string
+                                  example: null
+                                passenger_type:
+                                  type: string
+                                  example: bayi
+                          total_price:
+                            type: integer
+                            example: 2000000
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: The flight you are looking for is not available.
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: user id, flight id, and passengers data are required
+                      data:
+                        example: false
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: passengers data type must be an array of object
+                      data:
+                        example: false
+              examples:
+                transaction-not-found:
+                  summary: Jika data penerbangan tidak ditemukan
+                  value:
+                    status: false
+                    message: The flight you are looking for is not available.
+                    data: null
+                id-empty:
+                  summary: Data tidak lengkap
+                  value:
+                    status: false
+                    message: user id, flight id, and passengers data are required
+                    data: null
+                passengers-array:
+                  summary: Jika tipe data pada body passengers tidak sesuai
+                  value:
+                    status: false
+                    message: Passengers data type must be an array of object
+                    data: null
+      security:
+        - jwt_token: []
+    get:
+      tags:
+        - Transactions
+      summary: Mendapatkan satu data transaksi
+      description: Mendapatkan satu data transaksi berdasarkan id transaksi
+      parameters:
+      - in: query
+        name: transaction_id
         required: true
         schema:
           type: string
+          example: iEDE51rDDu3l
+        description: id of transaction
+      operationId: get-transaction-by-id
       responses:
-        200:
+        "200":
           description: Success
-          content: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Succes
+                  data: 
+                    type: object
+                    properties:
+                      user_id:
+                        type: integer
+                        example: 1
+                      transaction_id:
+                        type: integer
+                        example: 2
+                      transaction_date:
+                        type: string
+                        format: date-time
+                        example: 2023-06-20T11:37:50.551Z
+                      flight_number:
+                        type: string
+                        example: JT-792
+                      class:
+                        type: string
+                        example: ECONOMY
+                      price:
+                        type: integer
+                        example: 1506300
+                      departure_terminal_name:
+                        type: string
+                        example: Terminal 2E
+                      arrival_terminal_name:
+                        type: string
+                        example: Terminal Domestic
+                      flight_date:
+                        type: string
+                        format: date
+                        example: 2023-06-01
+                      departure_time:
+                        type: string
+                        example: 02:00
+                      arrival_time:
+                        type: string
+                        example: 05:20
+                      flight_duration:
+                        type: integer
+                        example: 200
+                      free_baggage:
+                        type: integer
+                        example: 20
+                      cabin_baggage:
+                        type: integer
+                        example: 7
+                      total_bill:
+                        type: number
+                        format: double
+                        example: 1506300
+                      payment_status:
+                        type: boolean
+                        example: false
+                      departure_airport:
+                        type: string
+                        example: Soekarno Hatta International Airport
+                      departure_code:
+                        type: string
+                        example: CGK
+                      departure_city:
+                        type: string
+                        example: Jakarta
+                      departure_country:
+                        type: string
+                        example: Indonesia
+                      arrivall_airport:
+                        type: string
+                        example: Hasanuddin
+                      arrivall_code:
+                        type: string
+                        example: UPG
+                      arrivall_city:
+                        type: string
+                        example: Makassar
+                      arrivall_country:
+                        type: string
+                        example: Indonesia
+                      airplane_model:
+                        type: string
+                        example: Boeing 737
+                      airplane_code:
+                        type: string
+                        example: BOEING-737-29
+                      airline:
+                        type: string
+                        example: Lion Air
+                      airline_code:
+                        type: string
+                        example: JT
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: transaction_id is required
+                  data:
+                    example: null
+        "404":
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: transaction not found
+                  data:
+                    example: null
+  /transactions/{user_id}:
+    get:
+      tags:
+        - Transactions
+      summary: Mendapatkan semua data transaksi yang dilakukan seorang pengguna
+      description: Mendapatkan semua data transaksi yang dilakukan seorang pengguna
+      parameters:
+      - in: path
+        name: user_id
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: id of user
+      operationId: get-user_id-transactions
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Succes
+                  data: 
+                    type: object
+                    properties:
+                      user_id:
+                        type: integer
+                        example: 1
+                      transaction_id:
+                        type: integer
+                        example: 2
+                      transaction_date:
+                        type: string
+                        format: date-time
+                        example: 2023-06-20T11:37:50.551Z
+                      flight_number:
+                        type: string
+                        example: JT-792
+                      class:
+                        type: string
+                        example: ECONOMY
+                      price:
+                        type: integer
+                        example: 1506300
+                      departure_terminal_name:
+                        type: string
+                        example: Terminal 2E
+                      arrival_terminal_name:
+                        type: string
+                        example: Terminal Domestic
+                      flight_date:
+                        type: string
+                        format: date
+                        example: 2023-06-01
+                      departure_time:
+                        type: string
+                        example: 02:00
+                      arrival_time:
+                        type: string
+                        example: 05:20
+                      flight_duration:
+                        type: integer
+                        example: 200
+                      free_baggage:
+                        type: integer
+                        example: 20
+                      cabin_baggage:
+                        type: integer
+                        example: 7
+                      total_bill:
+                        type: number
+                        format: double
+                        example: 1506300
+                      payment_status:
+                        type: boolean
+                        example: false
+                      departure_airport:
+                        type: string
+                        example: Soekarno Hatta International Airport
+                      departure_code:
+                        type: string
+                        example: CGK
+                      departure_city:
+                        type: string
+                        example: Jakarta
+                      departure_country:
+                        type: string
+                        example: Indonesia
+                      arrivall_airport:
+                        type: string
+                        example: Hasanuddin
+                      arrivall_code:
+                        type: string
+                        example: UPG
+                      arrivall_city:
+                        type: string
+                        example: Makassar
+                      arrivall_country:
+                        type: string
+                        example: Indonesia
+                      airplane_model:
+                        type: string
+                        example: Boeing 737
+                      airplane_code:
+                        type: string
+                        example: BOEING-737-29
+                      airline:
+                        type: string
+                        example: Lion Air
+                      airline_code:
+                        type: string
+                        example: JT
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: User with id,  is not found
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: The flight you are looking for is not available
+                      data:
+                        example: false
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: issuing country field is required
+                      data:
+                        example: false
+              examples:
+                userid-not-found:
+                  summary: Jika pengguna dengan ID tidak ada
+                  value:
+                    status: false
+                    message: User with id,  is not found
+                    data: null
+                flights-empty:
+                  summary: Jika penerbangan kosong
+                  value:
+                    status: false
+                    message: The flight you are looking for is not available
+                    data: null
+                country-required:
+                  summary: Jika negara penerbit belum di isi
+                  value:
+                    status: false
+                    message: issuing country field is required
+                    data: null
+      security:
+        - jwt_token: []
+  /payments:
+   post:
+      tags:
+        - Payments
+      summary: Menangani pembayaran
+      description: Endpoint ini menangani penyelesaian pembayaran
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transaction_id:
+                  type: string
+                  example: iEDE51rDDu3l
+      responses:
+        "200":
+          description: Success Update Data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data: 
+                    type: integer
+                    example: 1
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: payment data with transaction id iEDE51rDDu3l is already complete
+                      data: 
+                        example: null
+              examples:
+                payment-not-found:
+                  summary: Jika pembayaran dengan id tidak ada
+                  value:
+                    status: false
+                    message: payment data with transaction id,is not found
+                    data: null
+        "404":
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: payment data with transaction id iEDE51rDDu3l is not found
+                  data: 
+                    example: null
+      security:
+        - jwt_token: []
+  /tickets/{transaction_id}:
+   get:
+      tags:
+        - Tickets
+      summary: Mendapatkan data tiket
+      description: Tiket akan digenerate setelah user menyelesaikan payment
+      parameters:
+        - in: path
+          name: transaction_id
+          required: true
+          schema:
+            type: string
+            example: iEDE51rDDu3l
+          description: id of transaction
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        transaction_id:
+                          type: integer
+                          example: 1
+                        passenger_id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: Jeno
+                        is_active:
+                          type: boolean
+                          example: true
+                        ticket_code:
+                          type: string
+                          example: cYyQmYA1U6Zx
+                        qr_image:
+                          type: string
+                          example: https://ik.imagekit.io/at4li2svjc/PzV4gC17iYZl_HemoeHWaL
+                    
+        "404":
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: transaction data with transaction_id cYyQmYA1U6Zx is not found
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Tickets not found, please complete the payment!
+                      data: 
+                        example: null
+              examples:
+                transaction-not-found:
+                  summary: Jika data transaksi tidak ditemukan
+                  value:
+                    status: false
+                    message: transaction data with transaction_id cYyQmYA1U6Zx is not found
+                    data: null
+                ticket-not-found:
+                  summary: Jika tiket tidak ditemukan
+                  value:
+                    status: false
+                    message: Tickets not found, please complete the payment!
+                    data: null
+      security:
+        - jwt_token: []
   /notifications:
     get:
-      summary: Get all notifications
+      tags:
+        - Notifications
+      summary: Mendapatkan semua notifikasi berdasarkan user id
+      description: Mendapatkan semua data notifikasi berdasarkan user id
+      parameters:
+      - in: query
+        name: user_id
+        required: true
+        schema:
+          type: integer
+          example: 1
+        description: id of user
       responses:
-        200:
+        "200":
           description: Success
-          content: {}
-  /payment:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 8
+                        user_id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: email successfully verified"
+                        description:
+                          type: string
+                          example: testing
+                        body:
+                          type: string
+                          example: contoh body
+                        is_read:
+                          type: boolean
+                          example: false
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: 2023-06-23T13:45:06.740Z
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: 2023-06-23T13:45:06.740Z
+                    
+        "404":
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: User with id 1 is not found
+                      data: 
+                        example: null
+                  - type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: Notification is still empty
+                      data: 
+                        example: null
+              examples:
+                user-not-found:
+                  summary: Jika pengguna tidak ditemukan
+                  value:
+                    status: false
+                    message: User with id is not found
+                    data: null
+                notifs-not-found:
+                  summary: Jika notifikasi tidak ditemukan
+                  value:
+                    status: false
+                    message: Notification is still empty
+                    data: null
+      security:
+        - jwt_token: []
     post:
-      summary: Process payment
+      tags:
+        - Notifications
+      summary: Mengirim notifikasi kepada user tertentu
+      description:  Hanya admin yang dapat mengirim notifikasi
       requestBody:
         content:
-          '*/*':
+          application/json:
             schema:
-              $ref: '#/components/schemas/Payment'
-        required: true
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 2
+                title:
+                  type: string
+                  example: email successfully verified
+                description:
+                  type: string
+                  example: contoh testing aja
+                body:
+                  type: string
+                  example: ini bodynya ya
       responses:
-        200:
+        "200":
           description: Success
-          content: {}
-      x-codegen-request-body-name: payment
-  /transactions:
-    get:
-      summary: Get all transactions
-      responses:
-        200:
-          description: Success
-          content: {}
-    post:
-      summary: Create a new transaction
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/Transaction'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: transaction
-  /transactions/{transaction_id}:
-    get:
-      summary: Get transaction by ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: string
+                    example: null
+                    
+        "400":
+          description: Error Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: All field are required.
+                  data: 
+                    example: null
+        "404":
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: User with id 4 is not found
+                  data: 
+                    example: null
+      security:
+        - jwt_token: []
+  /notifications/{id}:
+   get:
+      tags:
+        - Notifications
+      summary: Mendapatkan notifikasi berdasarkan id
+      description: GET notification by id
       parameters:
-      - name: transaction_id
-        in: path
+      - in: path
+        name: id
         required: true
         schema:
-          type: string
+          type: integer
+          example: 1
+        description: id of notification
       responses:
-        200:
+        "200":
           description: Success
-          content: {}
-    put:
-      summary: Update transaction by ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 8
+                        user_id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: email successfully verified"
+                        description:
+                          type: string
+                          example: testing
+                        body:
+                          type: string
+                          example: contoh body
+                        is_read:
+                          type: boolean
+                          example: false
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: 2023-06-21T13:36:30.500Z
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: 2023-06-23T13:11:02.275Z
+                    
+        "404":
+          description: Error Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Notification with id 4 is not found
+                  data: 
+                    example: null
+      security:
+        - jwt_token: []
+   put:
+      tags:
+        - Notifications
+      summary: Mengubah status is_read notifikasi
+      description: untuk mengubah status notifikasi dari belum dibaca menjadi sudah dibaca
       parameters:
-      - name: transaction_id
-        in: path
+      - in: path
+        name: id
         required: true
         schema:
-          type: string
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/Transaction'
-        required: true
+          type: integer
+          example: 1
+        description: id of notification    
       responses:
-        200:
+        "200":
           description: Success
-          content: {}
-      x-codegen-request-body-name: transaction
-    delete:
-      summary: Delete transaction by ID
-      parameters:
-      - name: transaction_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-  /tickets:
-    get:
-      summary: Get all tickets
-      responses:
-        200:
-          description: Success
-          content: {}
-    post:
-      summary: Create a new ticket
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/Ticket'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: ticket
-  /tickets/{ticket_id}:
-    get:
-      summary: Get ticket by ID
-      parameters:
-      - name: ticket_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-    put:
-      summary: Update ticket by ID
-      parameters:
-      - name: ticket_id
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/Ticket'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: ticket
-    delete:
-      summary: Delete ticket by ID
-      parameters:
-      - name: ticket_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-  /passengers:
-    get:
-      summary: Get all passengers
-      responses:
-        200:
-          description: Success
-          content: {}
-    post:
-      summary: Create a new passenger
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/Passenger'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: passenger
-  /passengers/{passenger_id}:
-    get:
-      summary: Get passenger by ID
-      parameters:
-      - name: passenger_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-    put:
-      summary: Update passenger by ID
-      parameters:
-      - name: passenger_id
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/Passenger'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: passenger
-    delete:
-      summary: Delete passenger by ID
-      parameters:
-      - name: passenger_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-  /type_of_passengers:
-    get:
-      summary: Get all types of passengers
-      responses:
-        200:
-          description: Success
-          content: {}
-    post:
-      summary: Create a new type of passenger
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/TypeOfPassenger'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: type_of_passenger
-  /type_of_passengers/{type_id}:
-    get:
-      summary: Get type of passenger by ID
-      parameters:
-      - name: type_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-    put:
-      summary: Update type of passenger by ID
-      parameters:
-      - name: type_id
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/TypeOfPassenger'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: type_of_passenger
-    delete:
-      summary: Delete type of passenger by ID
-      parameters:
-      - name: type_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-  /discount:
-    get:
-      summary: Get all discounts
-      responses:
-        200:
-          description: Success
-          content: {}
-    post:
-      summary: Create a new discount
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/Discount'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: discount
-  /discount/{discount_id}:
-    get:
-      summary: Get discount by ID
-      parameters:
-      - name: discount_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-    put:
-      summary: Update discount by ID
-      parameters:
-      - name: discount_id
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/Discount'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: discount
-    delete:
-      summary: Delete discount by ID
-      parameters:
-      - name: discount_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-  /region_country:
-    get:
-      summary: Get all regions and countries
-      responses:
-        200:
-          description: Success
-          content: {}
-  /routes:
-    get:
-      summary: Get all routes
-      responses:
-        200:
-          description: Success
-          content: {}
-  /routes/{route_id}:
-    get:
-      summary: Get route by ID
-      parameters:
-      - name: route_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-  /detail_routes:
-    get:
-      summary: Get all detail routes
-      responses:
-        200:
-          description: Success
-          content: {}
-  /detail_routes/{detail_route_id}:
-    get:
-      summary: Get detail route by ID
-      parameters:
-      - name: detail_route_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-  /airplanes:
-    get:
-      summary: Get all airplanes
-      responses:
-        200:
-          description: Success
-          content: {}
-  /airplanes/{airplane_id}:
-    get:
-      summary: Get airplane by ID
-      parameters:
-      - name: airplane_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-  /seats:
-    get:
-      summary: Get all seats
-      responses:
-        200:
-          description: Success
-          content: {}
-  /seats/{seat_id}:
-    get:
-      summary: Get seat by ID
-      parameters:
-      - name: seat_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-  /flight_class:
-    get:
-      summary: Get all flight classes
-      responses:
-        200:
-          description: Success
-          content: {}
-    post:
-      summary: Create a new flight class
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/FlightClass'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: flight_class
-  /flight_class/{class_id}:
-    get:
-      summary: Get flight class by ID
-      parameters:
-      - name: class_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-    put:
-      summary: Update flight class by ID
-      parameters:
-      - name: class_id
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/FlightClass'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: flight_class
-    delete:
-      summary: Delete flight class by ID
-      parameters:
-      - name: class_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-  /airports:
-    get:
-      summary: Get all airports
-      responses:
-        200:
-          description: Success
-          content: {}
-    post:
-      summary: Create a new airport
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/Airport'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: airport
-  /airports/{airport_id}:
-    get:
-      summary: Get airport by ID
-      parameters:
-      - name: airport_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
-    put:
-      summary: Update airport by ID
-      parameters:
-      - name: airport_id
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/Airport'
-        required: true
-      responses:
-        200:
-          description: Success
-          content: {}
-      x-codegen-request-body-name: airport
-    delete:
-      summary: Delete airport by ID
-      parameters:
-      - name: airport_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Success
-          content: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: string
+                    example: null
+      security:
+        - jwt_token: []
 components:
-  schemas:
-    User:
-      type: object
-      properties:
-        user_id:
-          type: string
-        username:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-    Notification:
-      type: object
-      properties:
-        notification_id:
-          type: string
-        user_id:
-          type: string
-        message:
-          type: string
-        timestamp:
-          type: string
-    Payment:
-      type: object
-      properties:
-        payment_id:
-          type: string
-        transaction_id:
-          type: string
-        amount:
-          type: number
-        payment_date:
-          type: string
-    Transaction:
-      type: object
-      properties:
-        transaction_id:
-          type: string
-        customer_id:
-          type: string
-        booking_id:
-          type: string
-        payment_status:
-          type: string
-        transaction_date:
-          type: string
-    Ticket:
-      type: object
-      properties:
-        ticket_id:
-          type: string
-        transaction_id:
-          type: string
-        flight_id:
-          type: string
-        seat_id:
-          type: string
-        passenger_id:
-          type: string
-        ticket_status:
-          type: string
-    Passenger:
-      type: object
-      properties:
-        passenger_id:
-          type: string
-        name:
-          type: string
-        age:
-          type: integer
-        gender:
-          type: string
-    TypeOfPassenger:
-      type: object
-      properties:
-        type_id:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-    Discount:
-      type: object
-      properties:
-        discount_id:
-          type: string
-        code:
-          type: string
-        amount:
-          type: number
-        expiration_date:
-          type: string
-    RegionCountry:
-      type: object
-      properties:
-        region_id:
-          type: string
-        region_name:
-          type: string
-        countries:
-          type: array
-          items:
-            type: string
-    Route:
-      type: object
-      properties:
-        route_id:
-          type: string
-        origin:
-          type: string
-        destination:
-          type: string
-        distance:
-          type: number
-    DetailRoute:
-      type: object
-      properties:
-        detail_route_id:
-          type: string
-        route_id:
-          type: string
-        airline:
-          type: string
-        duration:
-          type: string
-        departure_time:
-          type: string
-        arrival_time:
-          type: string
-    Airplane:
-      type: object
-      properties:
-        airplane_id:
-          type: string
-        model:
-          type: string
-        capacity:
-          type: integer
-    Seat:
-      type: object
-      properties:
-        seat_id:
-          type: string
-        airplane_id:
-          type: string
-        seat_number:
-          type: string
-        seat_class:
-          type: string
-    FlightClass:
-      type: object
-      properties:
-        class_id:
-          type: string
-        class_name:
-          type: string
-        description:
-          type: string
-    Airport:
-      type: object
-      properties:
-        airport_id:
-          type: string
-        airport_name:
-          type: string
-        city:
-          type: string
+  securitySchemes:
+    jwt_token:
+      type: apiKey
+      in: header
+      name: Authorization
+      
