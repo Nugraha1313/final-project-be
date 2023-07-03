@@ -1,14 +1,12 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("../utils/nodemailer");
-// const imagekit = require("../utils/imageKit");
 const oauth2 = require("../utils/oauth2");
 const validator = require("validator");
 const fastestValidator = require("fastest-validator");
 const v = new fastestValidator();
-// const phones = require("phone");
-// const detectPhonenumber = require("detect-phonenumber");
 let otpGenerator = require("otp-generator");
+const axios = require("axios");
 const { Users } = require("../db/models");
 const { JWT_SECRET_KEY, API_HOST, FE_HOST } = process.env;
 // Function to Compares dates (expiration time and current time in our case)
@@ -117,7 +115,6 @@ module.exports = {
         });
       }
       // validator the phone number should number
-      // const validatorNumber = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
       const validatorNumber = new RegExp("^[0-9]+$");
       const is_valid_number = validatorNumber.test(phone_number);
       console.log("PHONE_NUMBER : ", phone_number);
@@ -163,14 +160,6 @@ module.exports = {
         });
       }
 
-      //   if (findUser && findUser.is_google_account == true) {
-      //     return res.status(400).json({
-      //       status: false,
-      //       message: "Email is already used!, Please login using google",
-      //       data: null,
-      //     });
-      //   }
-
       // To add minutes to the current time
       function AddMinutesToDate(date, minutes) {
         return new Date(date.getTime() + minutes * 60000);
@@ -178,15 +167,13 @@ module.exports = {
       //   OTP
       //Generate OTP
       const otp = otpGenerator.generate(6, {
-        alphabets: false,
-        upperCase: false,
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
         specialChars: false,
       });
       const now = new Date();
-      //   set to 1 minutes
+      //   set to 10 minutes
       const otp_expiration_time = AddMinutesToDate(now, 10);
-      // console.log("KODE OTP : ", otp);
-      // console.log("EXPIRED : ", otp_expiration_time);
       //  hashing password
       const hashPassword = await bcrypt.hash(password, 10);
 
@@ -303,52 +290,91 @@ module.exports = {
       throw err;
     }
   },
-    loginGoogle: async (req, res) => {
-      try {
-        const { code } = req.query;
-        if (!code) {
-          const googleLoginUrl = oauth2.generateAuthUrl();
-          return res.redirect(googleLoginUrl);
-        }
+  loginGoogle: async (req, res) => {
+    try {
+      const { access_token } = req.body;
 
-        await oauth2.setCreadentials(code);
-        const { data } = await oauth2.getUserData();
-
-        let user = await Users.findOne({
-          where: { email: data.email },
-        });
-        if (!user) {
-          user = await Users.create({
-            name: data.name,
-            email: data.email,
-            is_verified: true,
-            user_type: 'google',
-          });
-        } else {
-          await Users.update(
-            { is_verified: true, user_type:'google' },
-            { where: { email: data.email } }
-          );
-        }
-
-        const payload = {
-          id: user.id,
-          role: user.role,
-        };
-
-        const token = await jwt.sign(payload, JWT_SECRET_KEY);
-
-        return res.status(200).json({
-          status: true,
-          message: "login success!",
-          data: {
-            token: token,
-          },
-        });
-      } catch (err) {
-        throw err;
+      if (!access_token) {
+        return res.status(400).json({ message: "Access Token is required" });
       }
-    },
+
+      const response = await axios.get(
+        `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
+      );
+      const { name, email } = response.data;
+      let user = await Users.findOne({ where: { email: email } });
+
+      // if email is not registered
+      if (!user) {
+        await Users.create({
+          name: name,
+          email: email,
+          is_verified: true,
+          user_type: "google",
+        });
+      }
+
+      // if email is already register, but not verified
+      if (user && user.is_verified == false) {
+        await Users.update(
+          { is_verified: true, user_type: "google" },
+          { where: { email: email } }
+        );
+      } else if (user && user.is_verified == true) {
+        // when email is already register, and verified
+        await Users.update(
+          { user_type: "google" },
+          { where: { email: email } }
+        );
+      }
+
+      const payload = {
+        id: user.id,
+        role: user.role,
+      };
+
+      const token = await jwt.sign(payload, JWT_SECRET_KEY, {
+        expiresIn: "1d",
+      });
+
+      return res.status(200).json({
+        status: true,
+        message: "Login success!",
+        data: {
+          token: token,
+        },
+      });
+    } catch (error) {
+      let status = 500;
+      if (axios.isAxiosError(error)) {
+        error.message = error.response.data.error_description;
+        status = error.response.status;
+      }
+
+      res.status(status).json({ message: error.message });
+    }
+  },
+    //get credential token
+  loginGoogleGetData: async (req, res, next) => {
+    try {
+      const code = req.query.code;
+      if (!code) {
+        const url = oauth2.generateAuthUrl();
+        return res.redirect(url);
+      }
+
+      const token = await oauth2.setCredentials(code);
+
+      const { data } = await oauth2.getUserData();
+
+      return res.status(200).json({
+        data,
+        token,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
   resendOTP: async (req, res) => {
     const { email } = req.body;
 
@@ -383,15 +409,6 @@ module.exports = {
     // validate if user is already request resend otp => to limit request
     const now = new Date();
     if (findUser.otp != null && findUser.otp_expiration_time != null) {
-      // console.log("=========================================");
-      // console.log("NOW : ", now);
-      // console.log("EXPIRED : ", findUser.otp_expiration_time);
-      // console.log("=========================================");
-      // not expired
-      // console.log(
-      //   "HASIL PERBADNINGAN : ",
-      //   dates.compare(findUser.otp_expiration_time, now)
-      // );
       if (dates.compare(findUser.otp_expiration_time, now) == 1) {
         return res.status(400).json({
           status: false,
@@ -408,15 +425,13 @@ module.exports = {
     }
     //   OTP
     //Generate OTP
-    const generatedOTP = otpGenerator.generate(6, {
-      alphabets: false,
-      upperCase: false,
+    const otp = otpGenerator.generate(6, {
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
       specialChars: false,
     });
     //   set to 10 minutes
     const otp_expiration_time = AddMinutesToDate(now, 10);
-    // console.log("KODE OTP : ", generatedOTP);
-    // console.log("EXPIRED : ", otp_expiration_time);
 
     const updatedUser = await Users.update(
       { otp: generatedOTP, otp_expiration_time: otp_expiration_time },
@@ -445,8 +460,6 @@ module.exports = {
   },
   verifyOTP: async (req, res) => {
     try {
-      // token menandakan user sudah login
-      //   const { token } = req.query;
       const { email, otp } = req.body;
 
       if (!email) {
@@ -484,13 +497,6 @@ module.exports = {
       }
       //   if account is already verified
       if (user.is_verified == true) {
-        // check if OTP is expired or not
-        // console.log("OTP EXP : ", user.otp_expiration_time);
-        // console.log("CURRENT Date : ", currentDate);
-        // console.log(
-        //   "HASIL PERBANDINGAN DGN NOW : ",
-        //   dates.compare(user.otp_expiration_time, currentDate)
-        // );
         if (dates.compare(user.otp_expiration_time, currentDate) == 1) {
           // check if OTP is same with the DB
           if (otp == user.otp) {
@@ -531,39 +537,9 @@ module.exports = {
         user.otp_expiration_time != null
       ) {
         // check if OTP is expired or not
-        // console.log("OTP EXP : ", user.otp_expiration_time);
-        // console.log("CURRENT Date : ", currentDate);
         if (dates.compare(user.otp_expiration_time, currentDate) == 1) {
           // check if OTP is same with the DB
           if (otp == user.otp) {
-            // mark otp as verified => is_otp_verified = true
-            // check if account is verified or not
-            //   if (user.is_account_verified == false) {
-            //     // update is_verified =
-            //     const data = await jwt.verify(token, JWT_SECRET_KEY);
-            //     const updatedUser = await Users.update(
-            //       { otp: null,
-            //         is_otp
-            //         ,is_account_verified: true },
-            //       { where: { id: data.id } }
-            //     );
-            //     if (updatedUser[0] == 0) {
-            //       return res.status(400).json({
-            //         status: true,
-            //         message: "Activation account failed!",
-            //         data: null,
-            //       });
-            //     }
-
-            //     return res.status(200).json({
-            //       status: true,
-            //       message: "Activation account success!",
-            //       data: null,
-            //     });
-            //   }
-            // then delete the otp
-
-            //   const data = await jwt.verify(token, JWT_SECRET_KEY);
             const updatedUser = await Users.update(
               { otp: null, otp_expiration_time: null, is_verified: true },
               { where: { email } }
@@ -668,7 +644,6 @@ module.exports = {
           name: user.name,
           link: link,
         });
-        // await nodemailer.sendEmail(user.email, "Reset your password", htmlEmail);
         nodemailer.sendMail(email, "[TRIPP] Reset Password", html);
       }
       return res.status(200).json({

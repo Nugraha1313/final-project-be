@@ -24,7 +24,7 @@ module.exports = {
     });
   },
 
-  setCreadentials: (code) => {
+  setCredentials: (code) => {
     return new Promise(async (resolve, reject) => {
       try {
         const { tokens } = await oauth2Client.getToken(code);
