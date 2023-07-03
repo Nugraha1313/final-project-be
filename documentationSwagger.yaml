@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: Tiketing Pesawat
+  title: TRIPP
   description: |-
-    Aplikasi yang menyediakan layanan untuk kegiatan transaksi data pada pembelian tiket pesawat
+    Tripp adalah sebuah layanan yang digunakan untuk melakukan pemesanan tiket pesawat secara online. Dengan Tripp pengguna dapat memilih penerbangan berdasarkan jadwal dan maskapai, serta melakukan pembayaran secara online. 
   contact: 
     email: 202410102062@mail.unej.ac.id
   version: 1.0.0
@@ -732,8 +732,8 @@ paths:
     post:
       tags:
         - Flights
-      summary: Mendapatkan penerbangan 
-      description: dapatkan penerbangan dari kota yang paling banyak dikunjungi
+      summary: Digunakan untuk mencari jadwal penerbangan 
+      description: Digunakan untuk mencari jadwal penerbangan 
       operationId: post-flight-flights
       requestBody:
         content:
