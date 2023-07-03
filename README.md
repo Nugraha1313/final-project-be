@@ -4,16 +4,6 @@
 - Fitri Andriyani
 - Muhammad Aulia Nugraha
 ```
-## How to Running
-
-```bash
-- git clone https://github.com/Nugraha1313/final-project-be.git
-- npm install
-- cp .env.example .env
-- sequelize db:create
-- sequelize db:migrate
-- sequelize db:seed:all
-```
 
 ## Deployment Link
 ### 1. Development
