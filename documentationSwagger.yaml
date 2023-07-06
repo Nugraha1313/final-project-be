@@ -9,9 +9,9 @@ info:
 servers:
   - url: http://localhost:8000
     description: Test local computer
-  - url: https://final-project-be-develop.up.railway.app/
+  - url: https://composed-beds-develop.up.railway.app
     description: Staging
-  - url: not yet available
+  - url: https://composed-beds-production.up.railway.app
     description: Production
 tags:
   - name: Users
