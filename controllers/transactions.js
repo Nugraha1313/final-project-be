@@ -1,4 +1,4 @@
-const { Transactions, Detail_transaction, Passengers, Flights, Payments, Users } = require('../db/models');
+const { Transactions, Detail_transaction, Passengers, Flights, Payments, Users, Notifications } = require('../db/models');
 const {sequelize, queryTypes} = require('../external/postgres');
 const randomstring = require("randomstring");;
 
@@ -186,12 +186,19 @@ module.exports = {
           issuing_country: passenger.issuing_country,
           expiration_date: passenger.expiration_date,
           passenger_type_id: passenger_type
-        })
+        });
 
-        const detail_transaksi = await Detail_transaction.create({transaction_id: transaction.id, passenger_id: data.id})
+        await Detail_transaction.create({transaction_id: transaction.id, passenger_id: data.id});
       });
       
-      const payment = await Payments.create({transaction_id: transaction.id, amount, is_complete: false})
+      await Payments.create({transaction_id: transaction.id, amount, is_complete: false});
+      await Notifications.create({
+        user_id: user_id,
+        title: 'Transaksi Berhasil Dibuat',
+        description: 'Transaksi berhasil ditambahkan.',
+        body: 'Hallo, transaksi kamu berhasil ditambahkan. Silahkan untuk melanjutkan pembayaran!',
+        is_read: false
+      });
       
       return res.status(200).json({
         status: true,

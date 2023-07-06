@@ -1,4 +1,4 @@
-const { Payments, Detail_transaction, Tickets } = require('../db/models');
+const { Payments, Detail_transaction, Tickets, Notifications, Transactions } = require('../db/models');
 const randomstring = require("randomstring");
 const qrimage = require('../utils/qrimage');
 
@@ -43,6 +43,16 @@ module.exports = {
 
       // ubah payment jadi complete
       const update = await Payments.update({is_complete: true}, {where: {transaction_id}})
+
+      const transaction = await Transactions.findOne({where: {id: transaction_id}})
+
+      await Notifications.create({
+        user_id: transaction.user_id,
+        title: 'Pembayaran Berhasil',
+        description: `Pembayaran dengan kode transaksi ${transaction_id} telah berhasil.`,
+        body: `Pembayaran dengan kode transaksi ${transaction_id} telah berhasil. Silahkan periksa kembali tiketmu. Have a safe and happy flight!`,
+        is_read: false
+      });
 
       return res.status(200).json({
         status: true,
