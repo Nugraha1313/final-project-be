@@ -193,9 +193,9 @@ module.exports = {
 
       const token = await jwt.sign(payload, JWT_SECRET_KEY);
 
-      const url = `${req.protocol}://${req.get(
-        "host"
-      )}/auth/send-otp?token=${token}`;
+      // const url = `${req.protocol}://${req.get(
+      //   "host"
+      // )}/auth/send-otp?token=${token}`;
 
       const html = await nodemailer.getHtml("send-otp.ejs", {
         otp,
@@ -425,7 +425,7 @@ module.exports = {
     }
     //   OTP
     //Generate OTP
-    const otp = otpGenerator.generate(6, {
+    const generatedOTP = otpGenerator.generate(6, {
       lowerCaseAlphabets: false,
       upperCaseAlphabets: false,
       specialChars: false,
