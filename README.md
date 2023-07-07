@@ -2,7 +2,7 @@
 ```
 - Ari Putra Utama
 - Fitri Andriyani
-- Muhammad Aulia Nugraha
+- Muhamad Aulia Nugraha
 ```
 
 ## Deployment Link
